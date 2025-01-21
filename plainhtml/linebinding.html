@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <a href="https://line.me/R/ti/p/@310pndih">
+        <img height="36" border="0" alt="加入好友" src="https://scdn.line-apps.com/n/line_add_friends/btn/zh-Hant.png">
+    </a>
+    <script>
+        // 模擬綁定請求
+            async function sendBindingRequest() {
+            try {
+                // axios.post(url, data, config)  申請TOKEN不需要丟數據
+                const response = await axios.post('/line/bindRequest', null, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer <JWT_TOKEN>' // 替換為用戶的 JWT Token
+                    }
+                });
+                console.log('綁定信息發送成功:', response.data);
+            } catch (error) {
+                console.error('綁定失敗:', error.response ? error.response.data : error.message);
+            }
+        }
+
+// 調用函數
+sendBindingRequest();
+    </script>
+</body>
+</html>
