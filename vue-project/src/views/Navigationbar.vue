@@ -73,31 +73,12 @@
 </template>
 
 <script setup>
-import useUserStore from "@/stores/user.js";
-const userStore = useUserStore();
-const isLoggedIn = computed(() => userStore.isLoggedIn); // 直接從 Store 獲取
-
 import { computed } from "vue";
+import useUserStore from "@/stores/user.js";
 
-function getToken() {
-    return localStorage.getItem("token"); // 假設你的 JWT Token 存在 localStorage
-}
-
-const isLoggedIn = computed(() => {
-    const token = getToken();
-    if (!token) return false;
-
-    try {
-        // 簡單驗證 JWT 的有效性（例如是否過期）
-        const payload = JSON.parse(atob(token.split(".")[1]));
-        const currentTime = Math.floor(Date.now() / 1000);
-        return payload.exp > currentTime; // Token 是否未過期
-    } catch (error) {
-        return false; // 如果解析出錯，認為未登入
-    }
-});
-
-
+// 使用 Pinia 的 userStore  
+const userStore = useUserStore();
+const isLoggedIn = computed(() => userStore.isLogin); // 直接從 Store 獲取
 
 
 </script>

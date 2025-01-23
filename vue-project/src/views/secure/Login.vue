@@ -45,19 +45,24 @@ async function login() {
 		"username": username.value,
 		"password": password.value,
 	};
-	axiosapi.defaults.headers.authorization="";
-	userStore.setEmail("")
-    try {
-		const response = await axiosapi.post("/ajax/secure/login", body);
+	
+	//每次嘗試登入都要先把header中清空一次
+	axiosapi.defaults.headers.authorization="";  
+	userStore.setEmail("");
+	userStore.setToken("");
+    
+	try {
+		const response = await axiosapi.post("http://localhost:8080/ajax/secure/login", body);
 		console.log("response", response);
 		if (response.data.success) {
 			await Swal.fire({
 				title: response.data.message,
 				icon: "success"
 			});
-			axiosapi.defaults.headers.authorization="Bearer"+response.data.token;
+			axiosapi.defaults.headers.authorization="Bearer " + response.data.token;
 			userStore.setEmail(response.data.user);
-            router.push({path:"/"})
+			userStore.setToken(response.data.token);
+            router.push({path:"/"})   //跳轉回首頁
 		} else {
 			document.querySelector(".error").innerHTML = response.data.message;
 			Swal.fire({
