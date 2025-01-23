@@ -3,7 +3,7 @@
         <div>
     <div v-if="!isBound">
       <p>您尚未綁定 LINE，請先進行 LINE 登入：</p>
-      <a :href="lineLoginUrl" class="btn btn-primary">LINE 登入</a>
+      <LineLogin />
     </div>
     <div v-else>
       <p>您的 LINE 帳戶已綁定，請點擊下方按鈕追蹤商家：</p>
@@ -16,6 +16,7 @@
 <script setup>
 import axios from "axios";
 import Swal from "sweetalert2";
+import LineLogin from "../login/LineLogin.vue";
 
 // 綁定請求
 async function sendBindingRequest() {
