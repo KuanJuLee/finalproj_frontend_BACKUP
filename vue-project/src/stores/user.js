@@ -22,7 +22,7 @@ const useUserStore = defineStore("user", () => {
       }
 
 
-    // 判斷是否已登入（根據 token 判斷） 驗證token是否有效邏輯放在後端，從前端傳進request時就會被驗證
+    // 判斷是否已登入（根據 token 判斷） 驗證token是否有效邏輯放在後端，從前端傳request時就會被驗證
     const isLogin = computed(() => {
         return token.value !== null && token.value !== "";
     });
@@ -41,4 +41,4 @@ const useUserStore = defineStore("user", () => {
             storage: localStorage, paths: ["email","token"]    // 持久化 email 和 token
         }
     });
-export default useUserStore;
+export default useUserStore;    

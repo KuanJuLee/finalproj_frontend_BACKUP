@@ -61,7 +61,7 @@ async function login() {
 			});
 			axiosapi.defaults.headers.authorization="Bearer " + response.data.token;
 			userStore.setEmail(response.data.user);
-			userStore.setToken(response.data.token);
+			userStore.setToken(response.data.token);      //記得增添這一條!!!!!!!!!!!!!!!
             router.push({path:"/"})   //跳轉回首頁
 		} else {
 			document.querySelector(".error").innerHTML = response.data.message;
