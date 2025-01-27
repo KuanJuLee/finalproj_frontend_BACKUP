@@ -27,7 +27,9 @@
             >
             <ul class="dropdown-menu">
               <li>
-                <RouterLink class="dropdown-item" to="/pet/rescue">流浪救援</RouterLink>
+                <RouterLink class="dropdown-item" to="/pet/rescue/search"
+                  >流浪救援</RouterLink
+                >
               </li>
               <li>
                 <RouterLink class="dropdown-item" to="/pages/products"
@@ -42,29 +44,45 @@
             </ul>
           </li>
           <li class="nav-item">
-            <RouterLink class="nav-link active" aria-current="page" to="/pages/products"
+            <RouterLink
+              class="nav-link active"
+              aria-current="page"
+              to="/pages/products"
               >寵物商城</RouterLink
             >
           </li>
           <li class="nav-item">
-            <RouterLink class="nav-link active" aria-current="page" to="/pages/products"
+            <RouterLink
+              class="nav-link active"
+              aria-current="page"
+              to="/pages/products"
               >救援活動</RouterLink
             >
           </li>
           <li class="nav-item">
-            <RouterLink class="nav-link active" aria-current="page" to="/pages/products"
+            <RouterLink
+              class="nav-link active"
+              aria-current="page"
+              to="/pages/products"
               >地圖</RouterLink
             >
           </li>
           <li class="nav-item">
-            <RouterLink class="nav-link active" aria-current="page" to="/pages/products"
+            <RouterLink
+              class="nav-link active"
+              aria-current="page"
+              to="/pages/products"
               >地圖</RouterLink
             >
           </li>
           <li class="nav-item">
             <!-- 根據是否已登入顯示不同的 RouterLink -->
-            <RouterLink v-if="isLoggedIn" class="nav-link" to="/member-center">會員中心</RouterLink>
-            <RouterLink v-else class="nav-link" to="/secure/login"> 會員登入 </RouterLink>
+            <RouterLink v-if="isLoggedIn" class="nav-link" to="/member-center"
+              >會員中心</RouterLink
+            >
+            <RouterLink v-else class="nav-link" to="/secure/login">
+              會員登入
+            </RouterLink>
           </li>
         </ul>
       </div>
@@ -76,11 +94,9 @@
 import { computed } from "vue";
 import useUserStore from "@/stores/user.js";
 
-// 使用 Pinia 的 userStore  
+// 使用 Pinia 的 userStore
 const userStore = useUserStore();
 const isLoggedIn = computed(() => userStore.isLogin); // 直接從 Store 獲取
-
-
 </script>
 
 <style></style>

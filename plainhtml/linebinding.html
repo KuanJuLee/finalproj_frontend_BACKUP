@@ -6,6 +6,16 @@
     <title>Document</title>
 </head>
 <body>
+    <a id="lineButton" href="#" target="_blank">
+        <img height="36" border="0" alt="加入好友" src="https://scdn.line-apps.com/n/line_add_friends/btn/zh-Hant.png">
+    </a>
+
+    <script>
+        // 跳轉到中間層自訂義url，先記錄下跳轉夾帶的參數memberId，接著重新定向回Line官方連結
+        const memberId = "12345"; // 動態生成或從其他地方獲取的 memberId
+        const lineUrl = `http://localhost:8080/line?memberId=${memberId}`;
+        document.getElementById("lineButton").href = lineUrl;
+    </script>
 
     <a href="https://line.me/R/ti/p/@310pndih">
         <img height="36" border="0" alt="加入好友" src="https://scdn.line-apps.com/n/line_add_friends/btn/zh-Hant.png">

@@ -1,9 +1,11 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
+import axios from "axios";
 
 const useUserStore = defineStore("user", () => {
     const token = ref("");
     const email = ref("");
+    const isTokenValid = ref(true); // 標記 token 是否有效
      
     // 設置 Email
     function setEmail(data) {
@@ -19,12 +21,42 @@ const useUserStore = defineStore("user", () => {
     function logout() {
         email.value = "";
         token.value = "";
+        isTokenValid.value = false;
       }
 
+      // 從後端驗證 token 是否有效
+    async function validateToken() {
+        if (!token.value) {
+        isTokenValid.value = false;
+        return false;
+        }
 
-    // 判斷是否已登入（根據 token 判斷） 驗證token是否有效邏輯放在後端，從前端傳request時就會被驗證
+        try {
+        const response = await axios.post(
+            "http://localhost:8080/validateToken",
+            {},
+            {
+            headers: {
+                Authorization: `Bearer ${token.value}`,
+            },
+            }
+        );
+
+        // 根據後端返回的結果更新有效性
+        isTokenValid.value = response.data.valid;
+        return response.data.valid;
+        } catch (error) {
+        console.error("Token validation failed:", error);
+        isTokenValid.value = false;
+        return false;
+        }
+    }
+
+    //從token中解析memberId
+
+    // 判斷是否已登入且在時效內（根據 token 判斷） 驗證token是否有效邏輯放在後端，從前端傳request時就會被驗證
     const isLogin = computed(() => {
-        return token.value !== null && token.value !== "";
+        return token.value !== null && token.value !== "" && isTokenValid.value;;
     });
 
     return {
@@ -34,6 +66,7 @@ const useUserStore = defineStore("user", () => {
         token,
         setToken,
         logout,
+        validateToken,
     }
 },
     {
