@@ -49,6 +49,7 @@ const fetchCases = async () => {
     );
 
     // 更新案件數據
+    console.log("後端返回數據：", response.data.cases); // 調試數據結構
     rescueCaseList.value.push(...response.data.cases); // 新數據追加到現有數據中
     offset.value += limit; // 更新偏移量
     hasMore.value = response.data.hasMore; // 更新是否還有更多數據
