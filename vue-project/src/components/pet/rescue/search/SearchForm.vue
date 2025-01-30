@@ -72,7 +72,7 @@
         </label>
         <label>
           <input type="checkbox" :value="1" @change="updateSuspLost" />
-          走失標記
+          走失標記 <span class="optional">(如果浪浪疑似走失，請勾選)</span>
         </label>
       </div>
       <p class="tip">
@@ -232,11 +232,10 @@ const resetForm = () => {
 
 <style scoped>
 .search-form {
-  background-color: #f9f9f9;
+  /* background-color: #f9f9f9; */
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  font-family: Arial, sans-serif;
+  /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
 }
 
 .input-group {
@@ -246,27 +245,45 @@ const resetForm = () => {
 .input-field {
   width: 100%;
   padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
+  border: 1px solid #e5e2e5; /* 邊框顏色 */
+  border-radius: 5px; /* 圓弧邊角，數值越大圓弧越明顯 */
+  font-size: 16px;
+  background-color: #e5e2e5; /* 淺灰底色 */
+  outline: none; /* 移除點擊後的藍色外框 */
 }
 
 .filters {
   display: flex;
-  gap: 10px;
-  margin-bottom: 10px;
+  gap: 20px;
+  margin-bottom: 20px;
+  justify-content: space-between; /* 讓元素平均分配空間 */
+}
+
+/* 讓所有 select 平均分配寬度 */
+.filters select {
+  flex: 1; /* 讓每個 <select> 平均填充父容器 */
+  min-width: 0; /* 防止過度擠壓 */
 }
 
 .dropdown {
   padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  font-size: 16px;
+  border: 1px solid #e5e2e5; /* 邊框顏色 */
+  border-radius: 5px; /* 圓弧邊角，數值越大圓弧越明顯 */
+  font-size: 16px;
+  background-color: #e5e2e5; /* 淺灰底色 */
+}
+
+.optional {
   font-size: 14px;
+  color: #d32f2f;
+  font-weight: 500;
 }
 
 .species label {
-  margin-right: 15px;
+  margin-right: 30px;
   cursor: pointer;
+  font-size: 18px;
 }
 
 .species input {
@@ -274,31 +291,51 @@ const resetForm = () => {
 }
 
 .tip {
-  font-size: 14px;
-  color: #666;
-  background-color: #fff8e1;
+  font-size: 18px;
+  color: #262626;
+  background-color: #f1e7cb;
   padding: 10px;
-  border: 1px solid #ffe0b2;
+  /* border: 1px solid #ffe0b2; */
   border-radius: 4px;
+  margin-top: 10px;
 }
 
 .tip-highlight {
   color: #d32f2f;
-  font-weight: bold;
 }
 
 .highlight {
   color: #d32f2f;
-  font-weight: bold;
+  font-weight: 500;
 }
 
 .actions {
   display: flex;
   gap: 10px;
+  font-size: 18px;
 }
 
 .btn-reset {
-  background-color: #e0e0e0;
+  background-color: #fff;
+  border: 1px solid #333;
+  font-weight: 700;
+  width: 70px;
+  margin-right: 10px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-reset:hover {
+  background-color: #858285;
+  color: #fff;
+  border: none;
+}
+
+.btn-search {
+  background-color: #feba07;
+  font-weight: 700;
+  width: 120px;
   color: #333;
   padding: 8px 12px;
   border: none;
@@ -306,20 +343,7 @@ const resetForm = () => {
   cursor: pointer;
 }
 
-.btn-reset:hover {
-  background-color: #d6d6d6;
-}
-
-.btn-search {
-  background-color: #4caf50;
-  color: #fff;
-  padding: 8px 12px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
 .btn-search:hover {
-  background-color: #43a047;
+  background-color: #f2d17d;
 }
 </style>

@@ -33,6 +33,7 @@ const scrollContainer = ref(null); // 滾動容器引用
 // 初始化數據加載
 onMounted(() => {
   fetchCases();
+  window.addEventListener("scroll", handleScroll); // 監聽整個頁面的滾動
 });
 
 // 請求案件數據
@@ -60,14 +61,14 @@ const fetchCases = async () => {
   }
 };
 
-// 滾動事件處理
 const handleScroll = () => {
-  const container = scrollContainer.value;
-  if (!container) return;
+  // 取得視窗滾動高度 & 總文檔高度
+  const scrollTop = window.scrollY || document.documentElement.scrollTop;
+  const windowHeight = window.innerHeight;
+  const fullHeight = document.documentElement.scrollHeight;
 
-  const { scrollTop, scrollHeight, clientHeight } = container;
-  if (scrollTop + clientHeight >= scrollHeight - 10) {
-    // 當滾動到底部，請求下一批數據
+  if (scrollTop + windowHeight >= fullHeight - 10) {
+    // 當網頁滾到底部時，請求更多數據
     fetchCases();
   }
 };
@@ -75,10 +76,10 @@ const handleScroll = () => {
 
 <style scoped>
 .case-list {
-  height: 500px;
+  /* height: 500px; */
   overflow-y: auto;
-  border: 1px solid #ddd;
-  padding: 10px;
+  /* border: 1px solid #ddd; */
+  padding: 20px;
 }
 
 .loading,

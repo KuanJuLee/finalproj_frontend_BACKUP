@@ -10,5 +10,6 @@ export default {};
 h1 {
   font-size: 30px;
   font-weight: 900;
+  margin-bottom: 60px;
 }
 </style>
