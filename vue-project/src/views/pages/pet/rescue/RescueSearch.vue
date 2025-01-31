@@ -8,7 +8,9 @@
       </div>
       <div class="sidebar">
         <div class="support-button">
-          <button>新增救援資訊</button>
+          <RouterLink to="/pet/rescue/add" class="button-link">
+            新增救援資訊
+          </RouterLink>
         </div>
         <div class="advertisement">
           <p>工商</p>
@@ -23,11 +25,6 @@
 import SearchTitle from "@/components/pet/rescue/search/SearchTitle.vue";
 import SearchForm from "@/components/pet/rescue/search/SearchForm.vue";
 import CaseList from "@/components/pet/rescue/search/CaseList.vue";
-
-const addNewCase = () => {
-  console.log("跳轉到新增案件頁面");
-  // 使用路由導航至新增頁面
-};
 </script>
 
 <style>
@@ -35,10 +32,7 @@ const addNewCase = () => {
   margin: 0 auto;
   max-width: 1200px;
 }
-.add-info {
-  text-align: right;
-  margin-top: 20px;
-}
+
 .sidebar {
   flex: 1 1 20%;
   max-width: 100%;
@@ -55,21 +49,26 @@ const addNewCase = () => {
   width: 200px;
 }
 
-.support-button button {
-  font-weight: 600;
+.button-link {
+  display: inline-block;
+  font-weight: 500;
+  letter-spacing: 2px; /* 增加字元之間的距離 */
   background-color: #c6bc77;
   color: white;
   padding: 10px 20px;
-  font-size: 22px;
+  font-size: 20px;
+  text-align: center;
+  text-decoration: none;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   height: 100px;
   width: 200px;
-  box-shadow: 0px 1px 3px #6a6a6a;
+  box-shadow: 0px 2px 2px #6a6a6a;
+  line-height: 100px; /* 讓文字垂直置中 */
 }
 
-.support-button button:hover {
+.button-link:hover {
   background-color: #aca269;
 }
 

@@ -93,7 +93,7 @@
 import { ref, reactive, onMounted, computed, watch } from "vue";
 import axios from "axios";
 
-//搜尋條件
+//往後端送的搜尋條件
 const keyword = ref("");
 const furColorId = ref("");
 const caseStateId = ref("");
