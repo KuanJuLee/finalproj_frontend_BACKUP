@@ -10,6 +10,7 @@ import RescueSearch from '@/views/pages/pet/rescue/RescueSearch.vue';
 import MemberCenter from '@/views/secure/MemberCenter.vue';
 import LineMessage from '@/views/secure/LineMessage.vue';  
 import NewRescueCase from '../views/pages/pet/rescue/NewRescueCase.vue';
+import GoogleMap from '@/views/pages/pet/map/GoogleMap.vue';
 
 const routes = [
   { path: "/", component: Home, name: "home-link" },
@@ -22,6 +23,7 @@ const routes = [
   { path:"/member-center", component: MemberCenter, name: "member-center-link" },
   { path:"/advanced-settings", component: LineMessage, name: "advanced-settings-link"},
   { path:"/pet/rescue/add", component: NewRescueCase, name: "newRescueCase-link"},
+  { path:"/pet/map", component: GoogleMap, name: "googleMap-link"},
 ];
 const route = createRouter({
   routes: routes,
@@ -29,14 +31,14 @@ const route = createRouter({
 });
 
 
-// 全域前置守衛，進行用戶token驗證(持有&時效)
+// 全域前置守衛，進行用戶token驗證(持有&時效合法)
 route.beforeEach(async (to, from, next) => {
   const userStore = useUserStore();
-  const publicPages = ["/secure/login","/403","/","/pet/rescue/search"]; // 不需要驗證的路由
+  const publicPages = ["/secure/login","/403","/","/pet/rescue/search","/pet/map"]; // 不需要驗證的路由
   const authRequired = !publicPages.includes(to.path); // 需要驗證的路由
 
   if (authRequired) {
-    const isValid = await userStore.validateToken();
+    const isValid = await userStore.validateToken();    //自定義方法檢查Token是否有效
     if (!isValid) {
       userStore.logout(); // 清除用戶資訊
       alert("您的登入已過期，請重新登入！");
@@ -44,6 +46,6 @@ route.beforeEach(async (to, from, next) => {
     }
   }
 
-  next(); // 繼續導航
+  next(); // 驗證成功則繼續跳轉 
 });
 export default route;

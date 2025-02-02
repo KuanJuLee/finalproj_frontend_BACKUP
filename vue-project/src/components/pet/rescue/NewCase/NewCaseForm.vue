@@ -27,6 +27,22 @@
             </option>
           </select>
         </div>
+
+        <div class="form-group">
+          <label for="breed" class="required">物種</label>
+          <select id="breed" v-model="form.breedId" required>
+            <option value=""></option>
+            <option
+              v-for="breed in breeds"
+              :key="breed.breedId"
+              :value="breed.breedId"
+            >
+              {{ breed.breed }}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
         <div class="form-group">
           <label for="furColor">毛色</label>
           <select v-model="form.furColorId">
@@ -82,8 +98,8 @@
       <div class="form-group form-single-row">
         <label for="mark" class="required">走失標記</label>
         <select id="mark" v-model="form.suspLost" required>
-          <option value="1">是</option>
-          <option value="0">否</option>
+          <option value="true">是</option>
+          <option value="false">否</option>
         </select>
         <span class="optional"
           >此欄位代表是否為疑似走失，如果是，我們會增加特殊標示。</span
@@ -111,7 +127,7 @@
         <label for="reason" class="required">救援原因</label>
         <textarea
           id="reason"
-          v-model="form.reason"
+          v-model="form.rescueReason"
           placeholder="請描述救援原因..."
           required
         ></textarea>
@@ -121,6 +137,7 @@
         <label for="details">詳細說明</label>
         <textarea
           id="details"
+          class="from-details"
           v-model="form.details"
           placeholder="請輸入案件詳細說明..."
         ></textarea>
@@ -133,7 +150,7 @@
             <input
               type="checkbox"
               v-model="form.canAffords"
-              :value="canAfford.canAfford"
+              :value="canAfford.canAffordId"
             />
             {{ canAfford.canAfford }}</label
           >
@@ -142,33 +159,24 @@
 
       <div class="form-group form-single-row">
         <label class="required">圖片上傳(至少一張)</label>
-        <div class="image-preview">
-          <img
-            v-for="(image, index) in imageform"
-            :key="index"
-            :src="image"
-            alt="圖片預覽"
-            class="preview-image"
-          />
+        <div class="upload-image">
+          <ImageUpload @image-uploaded="ImageUploaded"></ImageUpload>
+          <ImageUpload @image-uploaded="ImageUploaded"></ImageUpload>
+          <ImageUpload @image-uploaded="ImageUploaded"></ImageUpload>
         </div>
-        <button type="button" @click="openUploadModal">上傳圖片</button>
       </div>
       <button type="submit" class="submit-button">確定送出</button>
     </form>
-
-    <!-- 圖片裁剪模態框 -->
-    <ImageUploadModal
-      v-if="isModalOpen"
-      @close="closeUploadModal"
-      @image-cropped="handleImageCropped"
-    />
   </div>
 </template>
 
 <script setup>
-import ImageUploadModal from "@/components/pet/rescue/newCase/ImageUploadModal.vue";
-import { ref, onMounted, computed, watch, reactive } from "vue";
+import ImageUpload from "./ImageUpload.vue";
+import { useRouter } from "vue-router";
+import { ref, onMounted, watch, reactive } from "vue";
 import axios from "axios";
+
+const router = useRouter();
 
 //從後端提取表單選項資料
 const furColors = ref([]);
@@ -181,50 +189,20 @@ const canAffords = ref([]);
 
 // 用來傳送資料給後端
 const form = reactive({
-  casetitle: "",
+  caseTitle: "",
   speciesId: "",
   breedId: "",
   furColorId: "",
   cityId: "",
   districtAreaId: "",
-  street: "",
-  suspLost: "",
+  street: null,
+  suspLost: false,
   rescueDemands: [],
-  tag: "",
+  tag: null,
   rescueReason: "",
   canAffords: [],
+  casePictures: [],
 });
-
-const images = ref([]);
-
-//圖片上傳預覽相關
-const imageform = ref({
-  title: "",
-  images: [], // 用於保存已裁剪的圖片
-});
-
-//圖片模態框預設為關閉
-const isModalOpen = ref(false);
-// 打開模態框
-const openUploadModal = () => {
-  isModalOpen.value = true;
-};
-// 關閉模態框
-const closeUploadModal = () => {
-  isModalOpen.value = false;
-};
-
-// 處理裁剪後的圖片
-const handleImageCropped = (croppedImage) => {
-  imageform.value.images.push(croppedImage); // 將裁剪後的圖片加入圖片列表
-  closeUploadModal();
-};
-
-const handleImageUpload = (event) => {
-  const files = event.target.files;
-  images.value = Array.from(files);
-  console.log("上傳的圖片：", images.value);
-};
 
 onMounted(() => {
   fetchFurColors();
@@ -236,13 +214,25 @@ onMounted(() => {
 });
 
 const submitForm = async () => {
+  console.log("送出數據為", form);
+
+  const user = localStorage.getItem("user");
+  const parsedUser = JSON.parse(user);
+  const token = parsedUser ? parsedUser.token : null;
+
   try {
     const response = await axios.post(
       "http://localhost:8080/RescueCase/add",
-      form
+      form,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
     console.log("表單提交成功:", response.data);
-    alert("表單提交成功！");
+    router.push("/pet/rescue/search"); // 成功後跳轉到 search 頁面
   } catch (error) {
     console.error("表單提交失敗:", error);
     alert("提交失敗，請重試！");
@@ -333,15 +323,25 @@ const fetchCanAffords = async () => {
     canAffords.value = response.data;
   } catch (error) {}
 };
+
+// 監聽圖片上傳事件
+const ImageUploaded = (backTmpUrl) => {
+  console.log("父組件拿到囉!", backTmpUrl);
+  form.casePictures.push(backTmpUrl);
+  console.log("新增圖片進表單", form);
+};
 </script>
 <style scoped>
 .form-container {
+  display: flex;
+  justify-content: flex-end; /* 讓按鈕靠右對齊 */
   max-width: 2000px;
   margin: 0 20px;
   padding: 65px 50px;
   background: #e5e2e5;
   border-radius: 10px;
-  box-shadow: 0 5px 1px #959395;
+  box-shadow: -7px 7px 3px #c7b07897;
+  margin-bottom: 50px;
 }
 
 label.required::before {
@@ -396,6 +396,10 @@ textarea {
   height: 80px;
 }
 
+.from-details {
+  height: 140px;
+}
+
 .checkbox-group label {
   display: inline-block;
   align-items: center;
@@ -411,15 +415,16 @@ textarea {
   cursor: pointer;
 }
 
-.image-upload {
+.upload-image {
   margin-top: 10px;
   display: flex;
-  justify-content: space-between; /* 讓元素平均分配空間 */
-  margin-right: 10px;
+  gap: 20px; /* 設定元素之間的間距為 20px */
+  flex-wrap: wrap; /* 如果內容超過父容器，允許換行，確保響應模設計 */
 }
 
 .submit-button {
-  width: 100%;
+  margin-top: 20px;
+  width: 200px;
   padding: 10px;
   background-color: #feba07;
   color: white;
@@ -441,19 +446,5 @@ textarea {
 
 .form-row .form-group {
   flex: 1;
-}
-
-.image-preview {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-
-.preview-image {
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
-  border: 1px solid #ddd;
-  border-radius: 5px;
 }
 </style>

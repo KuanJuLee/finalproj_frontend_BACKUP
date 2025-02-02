@@ -68,12 +68,6 @@ const statusClass = (caseState) => {
 </script>
 
 <style scoped>
-@font-face {
-  font-family: "jf-openhuninn";
-  src: url("/fonts/jf-openhuninn-2.1.ttf") format("truetype");
-  font-weight: normal;
-}
-
 .post-id {
   font-weight: 400;
 }

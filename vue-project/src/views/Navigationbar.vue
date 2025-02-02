@@ -1,8 +1,8 @@
 <template>
   <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container-fluid">
-      <RouterLink class="navbar-brand" aria-current="page" to="/"
-        ><img src="../assets/logo.png" alt="logo" style="width: 5%"
+      <RouterLink class="navbar-brand logo-container" aria-current="page" to="/"
+        ><img src="../assets/logo.png" alt="logo"
       /></RouterLink>
       <button
         class="navbar-toggler"
@@ -63,15 +63,7 @@
             <RouterLink
               class="nav-link active"
               aria-current="page"
-              to="/pages/products"
-              >地圖</RouterLink
-            >
-          </li>
-          <li class="nav-item">
-            <RouterLink
-              class="nav-link active"
-              aria-current="page"
-              to="/pages/products"
+              to="/pet/map"
               >地圖</RouterLink
             >
           </li>
@@ -99,4 +91,10 @@ const userStore = useUserStore();
 const isLoggedIn = computed(() => userStore.isLogin); // 直接從 Store 獲取
 </script>
 
-<style></style>
+<style>
+.logo-container img {
+  margin-left: 40px;
+  width: 60px; /* 設定固定寬度 */
+  height: auto; /* 保持圖片比例 */
+}
+</style>
