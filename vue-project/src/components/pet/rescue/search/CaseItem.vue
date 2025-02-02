@@ -16,10 +16,12 @@
       <div class="info-3">
         建立日期: {{ formatDate(caseItem.publicationTime) }}
       </div>
-      <h2 class="case-title">
-        [{{ caseItem.cityName }}{{ caseItem.districtAreaName }}]
-        {{ caseItem.caseTitle }}
-      </h2>
+      <router-link :to="`/pet/rescueCase/${caseItem.rescueCaseId}`">
+        <h2 class="case-title">
+          [{{ caseItem.cityName }}{{ caseItem.districtAreaName }}]
+          {{ caseItem.caseTitle }}
+        </h2>
+      </router-link>
       <div class="post-details-p">
         <p>動物類別：{{ caseItem.species }}</p>
         <!-- <p>動物數量：1</p> -->
@@ -40,12 +42,20 @@
 </template>
 
 <script setup>
+import { ref } from "vue";
+
+//父組件傳遞的案件資訊
 defineProps({
   caseItem: {
     type: Object,
     required: true,
   },
 });
+
+const pictureUrls = ref([]);
+
+//向後端請求對應案件的圖片(會獲得後端路徑，要在此改為前端路徑)
+const getCasePictures = () => {};
 
 // 格式化日期函數
 const formatDate = (date) => {
