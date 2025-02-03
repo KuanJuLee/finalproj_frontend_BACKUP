@@ -2,7 +2,7 @@
   <div class="post">
     <div class="post-image">
       <img
-        :src="caseItem.casePictures?.[0] || '/placeholder-image.jpg'"
+        :src="caseItem.casePictures?.[0].pictureUrl || '/placeholder-image.jpg'"
         :alt="caseItem.caseTitle"
       />
     </div>
@@ -24,9 +24,8 @@
       </router-link>
       <div class="post-details-p">
         <p>動物類別：{{ caseItem.species }}</p>
-        <!-- <p>動物數量：1</p> -->
-        <p>救援需求：{{ caseItem.rescueDemands }}</p>
-        <p>通報人可負擔事項：{{ caseItem.canAffords }}</p>
+        <p>救援需求：{{ caseItem.rescueDemands.join(" ") }}</p>
+        <p>通報人可負擔事項：{{ caseItem.canAffords.join("、") }}</p>
       </div>
       <div class="case-footer">
         <p>
@@ -78,8 +77,14 @@ const statusClass = (caseState) => {
 </script>
 
 <style scoped>
+a {
+  text-decoration: none; /* 移除底線 */
+  color: inherit; /* 讓顏色繼承父層的設定 */
+}
+
 .post-id {
   font-weight: 400;
+  letter-spacing: 0.5px;
 }
 
 .case-status {
@@ -104,6 +109,7 @@ const statusClass = (caseState) => {
 
 .case-title {
   font-size: 22px;
+  letter-spacing: 0.5px;
   font-weight: 700;
   margin-bottom: 8px;
   transition: color 0.2s ease-in-out, text-decoration 0.2s ease-in-out;
@@ -129,12 +135,12 @@ const statusClass = (caseState) => {
 }
 
 .author {
-  color: #c6bc77;
+  color: #afa66b;
 }
 
 .post {
   display: flex;
-  flex: 0 0 70%;
+  flex: 0 0 80%;
   margin-bottom: 50px;
   margin-top: 50px;
   padding-bottom: 35px;
@@ -147,15 +153,16 @@ const statusClass = (caseState) => {
 
 .info {
   display: flex;
-  color: #c6bc77;
-  font-weight: 600;
+  color: #b4ab6d;
+  font-weight: 700;
   font-size: 17px;
   display: flex;
   justify-content: space-between;
 }
 
 .info-3 {
-  font-size: 12px;
+  font-size: 14px;
+  letter-spacing: 0.5px;
   margin: 0px;
   padding: 0px;
   margin-bottom: 20px;

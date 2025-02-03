@@ -29,7 +29,7 @@ import CaseList from "@/components/pet/rescue/search/CaseList.vue";
 
 <style>
 .rescue-page {
-  margin: 0 auto;
+  margin: 35px auto;
   max-width: 1200px;
 }
 

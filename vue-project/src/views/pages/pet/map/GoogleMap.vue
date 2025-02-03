@@ -3,7 +3,7 @@
     <!-- 左側篩選欄 -->
     <div class="search-form">
       <div class="search-form-container">
-        <p>透過以下分類搜尋:</p>
+        <p>透過以下條件搜尋:</p>
         <form>
           <font-awesome-icon
             icon="fa-solid fa-thumbtack"
@@ -160,6 +160,7 @@ import axios from "axios";
 
 const mapId = import.meta.env.VITE_API_GOOGLE_MAP_ID; //新marker版本需要對應一張特定地圖id
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
+const frontUrl = import.meta.env.VITE_FRONT_URL;
 const googleKey = import.meta.env.VITE_API_GOOGLE_KEY;
 
 let map; // 存儲地圖實例
@@ -189,7 +190,7 @@ const startDate = ref(""); //單選
 const endDate = ref(""); //單選
 const suspLost = ref(false); //單選
 //多選
-const caseTypes = ref([]); // 多選
+const caseTypes = ref(["RescueCase", "lostCase", "adoptCase"]); // 多選
 const selectedcaseStates = ref([]); // 多選
 const selectedspecies = ref([]); // 多選
 const selectedFurColors = ref([]); // 多選
@@ -268,15 +269,26 @@ const fetchBreeds = async () => {
   }
 };
 
+//將後端返回的caseType從英文轉回中文字串，顯示於案件圖標資訊中
+const translateCaseType = (caseType) => {
+  console.log(caseType);
+  const typeMap = {
+    rescueCase: "救援案件",
+    lostCase: "遺失案件",
+    adoptCase: "認養案件",
+  };
+  return typeMap[caseType] || "未知案件"; // 預設為 "未知案件" 以防錯誤
+};
+
 // **動態加載 Google Maps API**
 const loadGoogleMapsAPI = () => {
   return new Promise((resolve) => {
-    if (window.google && window.google.maps) {
+    if (window.google && window.google.maps && window.google.maps.marker) {
       resolve();
       return;
     }
     const script = document.createElement("script");
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${googleKey}&libraries=marker`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${googleKey}&libraries=marker,maps`;
     script.defer = true;
     script.async = true;
     script.onload = resolve;
@@ -294,7 +306,7 @@ const initMap = () => {
   infoWindow.value = new google.maps.InfoWindow();
 };
 
-//預設載入所有案件
+//進入頁面預設載入所有案件
 const fetchAllCases = async () => {
   try {
     clearMarkers();
@@ -313,7 +325,8 @@ const fetchAllCases = async () => {
           caseData.caseType,
           caseData.publicationTime,
           caseData.city,
-          caseData.district
+          caseData.district,
+          caseData.caseId
         );
       });
     }
@@ -322,33 +335,45 @@ const fetchAllCases = async () => {
   }
 };
 
+//產生送往後端的篩選條件，產生正確的 Query 參數格式（包含單選和多選）
+const buildQueryParams = () => {
+  const queryParams = new URLSearchParams();
+
+  // ✅ 處理 **單選** 參數（如果值非空則加入）
+  if (city.value) queryParams.append("city", city.value);
+  if (district.value) queryParams.append("district", district.value);
+  if (selectedBreed.value) queryParams.append("breedId", selectedBreed.value);
+  if (startDate.value) queryParams.append("startDate", startDate.value);
+  if (endDate.value) queryParams.append("endDate", endDate.value);
+  if (suspLost.value !== null) queryParams.append("suspLost", suspLost.value);
+
+  // ✅ 處理 **多選** 參數（確保每個值都正確加入）
+  selectedcaseStates.value.forEach((id) => queryParams.append("caseState", id));
+  selectedspecies.value.forEach((id) => queryParams.append("species", id));
+  selectedFurColors.value.forEach((id) => queryParams.append("furColors", id));
+
+  return queryParams.toString();
+};
+
 // 根據篩選條件取得案件
 const fetchFilteredCases = async () => {
   try {
     clearMarkers();
+    await new Promise((resolve) => setTimeout(resolve, 300)); // 確保標記完全清除
+
     if (caseTypes.value.length === 0) {
       fetchAllCases(); // 若無勾選條件，則顯示所有案件
       return;
     }
-    for (const caseType of caseTypes.value) {
-      const response = await axios.get(`${baseUrl}/${caseType}/getLocations`, {
-        params: {
-          caseState: selectedcaseStates.value.length
-            ? selectedcaseStates.value
-            : null,
-          city: city.value || null,
-          district: district.value || null,
-          species: selectedspecies.value.length ? selectedspecies.value : null,
-          breedId: selectedBreedId.value || null,
-          furColors: selectedFurColors.value.length
-            ? selectedFurColors.value
-            : null,
-          suspLost: suspLost.value ? true : null,
-          startDate: startDate.value || null,
-          endDate: endDate.value || null,
-        },
-      });
+    // axios 在序列化params時，會自動加上[]，導致不符合標準HTTP查詢參數格式，因此手動處理URL參數
+    const queryString = buildQueryParams();
+    console.log("往後端送的條件參數", queryString);
 
+    for (const caseType of caseTypes.value) {
+      const url = `${baseUrl}/${caseType}/getLocations/filters?${queryString}`;
+      console.log("url", url);
+      const response = await axios.get(url);
+      console.log("查詢到的案件", response.data);
       response.data.forEach((caseData) => {
         addMarker(
           caseData.latitude,
@@ -360,22 +385,43 @@ const fetchFilteredCases = async () => {
           caseData.caseType,
           caseData.publicationTime,
           caseData.city,
-          caseData.district
+          caseData.district,
+          caseData.caseId
         );
       });
+
+      console.log("✅ 新增標記後，目前標記數量:", markers.value.length);
     }
   } catch (error) {
     console.error("無法獲取篩選後案件資料:", error);
   }
 };
 
-// 清除標記
 const clearMarkers = () => {
-  markers.value.forEach((marker) => marker.setMap(null));
-  markers.value = [];
+  console.log("🛑 清除所有標記！目前標記數量:", markers.value.length);
+
+  if (markers.value.length === 0) {
+    console.warn("⚠️ 沒有標記需要清除");
+    return;
+  }
+
+  // 確保所有標記被完全移除
+  markers.value.forEach((marker, index) => {
+    if (marker && marker.setMap) {
+      marker.setMap(null);
+      console.log(`✅ 清除了標記 ${index}: `, marker);
+    } else {
+      console.warn(`⚠️ 無效標記 ${index}: `, marker);
+    }
+  });
+
+  // 清空 markers 陣列（確保 Vue 響應式更新）
+  markers.value.splice(0, markers.value.length);
+
+  console.log("✅ 標記已全部清除！目前標記數量:", markers.value.length);
 };
 
-// 新增標記並加入點擊事件
+// 新增標記並加入滑鼠事件
 const addMarker = (
   lat,
   lng,
@@ -386,49 +432,130 @@ const addMarker = (
   caseType,
   publicationTime,
   city,
-  district
+  district,
+  caseId
 ) => {
-  const marker = new google.maps.Marker({
-    position: { lat, lng },
-    map,
-    caseTitle,
-  });
-  console.log("案件圖片", casePictures);
+  // 轉換 caseType 為中文
+  const caseTypeZh = translateCaseType(caseType);
 
-  // 案件資訊視窗內容
-  const contentString = `
-    <div style="max-width: 400px; display: flex; align-items: center; gap: 10px;">
-      <img src="${casePictures[0].pictureUrl}" alt="案件圖片" style="width: 130px; height: 130px; object-fit: cover; border-radius: 8px;">
-      <div>
-        <h4 style="margin: 5px 0; font-size: 16px; font-weight: bold;">[${city}${district}]
-        ${caseTitle}</h4>
-        <div class="case-status" :class="statusClass(caseItem.caseState)">
-        ${caseState.caseStatement}
+  // 設定不同案件類型的背景顏色
+  const caseTypeStyle = (() => {
+    switch (caseTypeZh) {
+      case "救援案件":
+        return "background-color: #E16A54; color: white; border-radius: 10px; padding: 5px 10px; font-weight: bold;width: 75px; text-align: center;";
+      case "遺失案件":
+        return "background-color: #ffa726; color: white; border-radius: 10px; padding: 5px 10px; font-weight: bold;";
+      case "認養案件":
+        return "background-color: #42a5f5; color: white; border-radius: 10px; padding: 5px 10px; font-weight: bold;";
+      default:
+        return "background-color: #9e9e9e; color: white; border-radius: 20px; padding: 5px 10px; font-weight: bold;";
+    }
+  })();
+
+  //將 publicationTime 轉換成 YYYY-MM-DD 格式
+  const formatDate = (isoString) => {
+    return isoString.split("T")[0]; // 只取 "2025-02-03" 部分
+  };
+  const formattedDate = formatDate(publicationTime);
+
+  //設定案件頁面的 URL
+  const caseUrl = `${window.location.origin}/pet/${caseType}/${caseId}`;
+
+  // 設定不同案件狀態的背景顏色
+  const caseStateStyle = (() => {
+    switch (caseState.caseStatement) {
+      case "待救援":
+        return "background-color: #ed6c6c; color: white; border-radius: 10px; padding: 3px 4px; font-weight: bold;width: 62px; text-align: center;";
+      case "已救援":
+        return "background-color: #feba07; color: white; border-radius: 10px; padding: 5px 10px; font-weight: bold;";
+      case "待認養":
+        return "background-color: #ed6c6c; color: white; border-radius: 10px; padding: 5px 10px; font-weight: bold;";
+      case "已認養":
+        return "background-color: #feba07; color: white; border-radius: 10px; padding: 5px 10px; font-weight: bold;";
+      case "待協尋":
+        return "background-color: #ed6c6c; color: white; border-radius: 10px; padding: 5px 10px; font-weight: bold;";
+      case "已尋回":
+        return "background-color: #feba07; color: white; border-radius: 10px; padding: 5px 10px; font-weight: bold;";
+      case "變成小天使":
+        return "background-color: #feba07; color: white; border-radius: 10px; padding: 5px 10px; font-weight: bold;";
+      case "案件失敗":
+        return "background-color: #feba07; color: white; border-radius: 10px; padding: 5px 10px; font-weight: bold;";
+      default:
+        return "background-color: #9e9e9e; color: white; border-radius: 20px; padding: 5px 10px; font-weight: bold;";
+    }
+  })();
+
+  // **建立資訊視窗內容**
+  const infoWindowContent = `
+   <div style="display: flex; flex-direction: column; align-items: flex-start; max-width:430px; gap: 10px;">
+    <!-- 案件類型標籤 -->
+    <span style="${caseTypeStyle}; margin: 0; ">${caseTypeZh}</span>
+    <!-- 主要內容區 -->
+    <div style="display: flex; align-items: stretch; gap: 10px;">
+      <!-- 左側圖片 -->
+      <img src="${casePictures[0].pictureUrl}"
+           alt="案件圖片"
+           style="height: 150px; object-fit: cover; border-radius: 8px; flex-shrink: 0;">
+
+      <!-- 右側文字內容 -->
+      <div style="display: flex; flex-direction: column; justify-content: space-between; max-width: 100%;">
+        <h4 style="margin: 5px 0; font-size: 16px; font-weight: bold;">
+          [${city}${district}] ${caseTitle}
+        </h4>
+
+        <!-- 案件狀態 -->
+        <div style="padding: 4px 8px; border-radius: 4px; font-size: 14px;
+                    background-color: #ddd; display: inline-block; ${caseStateStyle}">
+          ${caseState.caseStatement}
         </div>
-         <p style="margin: 5px 0; font-size: 14px; color: #333; font-weight: 500;">${rescueReason}</p>
-        <p  style=" font-size: 14px; color: #666;"> 建立日期: ${publicationTime}</p>
+
+        <!-- 內容說明 -->
+        <p style="margin: 5px 0; font-size: 14px; color: #333; font-weight: 500;">
+          ${rescueReason}
+        </p>
+
+        <p style="font-size: 14px; color: #666;">建立日期: ${formattedDate}</p>
       </div>
-      </div>
-    </div>
-    <div class="post">
-    <div class="post-image">
-      <img
-        :src="${casePictures[0]} "
-        :alt="${caseTitle}"
-      />
     </div>
   </div>
   `;
 
-  // 監聽 `mouseover` 事件來顯示資訊視窗
-  marker.addListener("mouseover", () => {
-    infoWindow.value.setContent(contentString);
-    infoWindow.value.open(map, marker);
+  // 創建標記 (AdvancedMarkerElement)
+  const marker = new google.maps.marker.AdvancedMarkerElement({
+    position: { lat, lng },
+    map,
+    title: caseTitle, // 讓 Google Maps 內建 hover 顯示標題
+    gmpClickable: true, //開啟滑鼠點擊屬性
+  });
+  console.log("新marker的案件圖片", casePictures);
+
+  // 創建 InfoWindow
+  const infoWindow = new google.maps.InfoWindow({
+    content: infoWindowContent,
+    disableAutoPan: true, // 防止自動調整
   });
 
-  // 監聽 `mouseout` 事件來隱藏資訊視窗
-  marker.addListener("mouseout", () => {
-    infoWindow.value.close();
+  //InfoWindow 不會再顯示 X 按鈕
+  google.maps.event.addListener(infoWindow, "domready", () => {
+    const closeButton = document.querySelector(".gm-ui-hover-effect");
+    if (closeButton) {
+      closeButton.style.display = "none"; // 隱藏 X 按鈕
+    }
+  });
+
+  // 監聽 `mouseenter` (滑鼠懸停) 來顯示 `InfoWindow`，AdvancedMarkerElement 沒有內建 mouseover 事件，但可以透過 marker.element 來監聽 DOM 事件
+  marker.element.addEventListener("mouseenter", () => {
+    infoWindow.open(map, marker);
+  });
+
+  // 監聽 `mouseleave` (滑鼠離開) 來關閉 `InfoWindow`
+  marker.element.addEventListener("mouseleave", () => {
+    infoWindow.close();
+  });
+
+  // 滑鼠點擊時，開啟新分頁案件頁面
+  marker.addListener("click", () => {
+    window.open(caseUrl, "_blank"); // 在新分頁開啟案件詳細頁，這個路徑是加諸於原本的
   });
 
   markers.value.push(marker);
@@ -449,6 +576,8 @@ watch(
     endDate,
   ],
   async () => {
+    console.log("條件變化了!");
+    clearMarkers(); // 確保標記真的清除
     await fetchFilteredCases();
   }
 );
@@ -456,6 +585,7 @@ watch(
 onMounted(async () => {
   await loadGoogleMapsAPI();
   initMap();
+  window.clearMarkers = clearMarkers;
   fetchAllCases();
   fetchFurColors();
   fetchCities();
@@ -483,9 +613,9 @@ onMounted(async () => {
 
 .search-form {
   border: 1px solid #e1e1e1;
-  width: 25%;
+  width: 21%;
   height: 100%;
-  background-color: #f8f8f8;
+  background-color: #f0efef;
   padding: 10px;
   box-sizing: border-box;
   overflow-y: auto; /* 允許篩選欄在垂直方向上出現滾動條 */
@@ -495,7 +625,7 @@ onMounted(async () => {
   border-radius: 10px;
   height: 100%;
   padding: 10px;
-  background-color: #f4f4f4;
+  background-color: #f8f6f6;
   border: #ccc 0.5px solid;
 }
 
