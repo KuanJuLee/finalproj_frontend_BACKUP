@@ -192,8 +192,9 @@ import { useRoute } from "vue-router";
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
-const route = useRoute();
-const caseId = route.params.id; // 從路徑中獲取 ID
+const router = useRoute(); //專門用來讀取當前路由資訊
+const route = useRouter();  //專門用來跳轉頁面
+const caseId = router.params.id; // 從路徑中獲取 ID
 console.log("獲取的案件 ID:", caseId);
 
 
@@ -245,18 +246,6 @@ const submitForm = async () => {
   const token = parsedUser ? parsedUser.token : null;
 
 
- // **轉換 casePictures 為符合後端需求的 imageIdandUrl**
- const imageIdandUrl = {};
-  form.casePictures.forEach((picture, index) => {
-    if (picture.casePictureId !== null) {
-      // ✅ 有 `casePictureId`，代表是舊圖片，直接存入 Map
-      imageIdandUrl[picture.casePictureId] = picture.pictureUrl || "";
-    } else if (picture.pictureUrl) {
-      // ✅ `casePictureId` 為 `null`，但 `pictureUrl` 存在，代表這是新圖片
-      imageIdandUrl[`new_${index}`] = picture.pictureUrl;
-    }
-  });
-
     // **建立符合後端 `ModifyRescueCaseDto` 的物件**
     const requestData = {
       caseTitle: form.caseTitle,
@@ -276,10 +265,9 @@ const submitForm = async () => {
       tag: form.tag,
       rescueDemands: form.rescueDemands,
       canAffords: form.canAffords,
-      imageIdandUrl: imageIdandUrl,  // ✅ 確保 `imageIdandUrl` 轉換完成
+      casePictures: form.casePictures,  // ✅ 確保 `imageIdandUrl` 轉換完成
     };
 
-    console.log("📝 最終要送出的 requestData:", JSON.stringify(requestData, null, 2));
 
   try {
     const response = await axios.put(
@@ -293,7 +281,7 @@ const submitForm = async () => {
       }
     );
     console.log("表單提交成功:", response.data);
-    router.push("/pet/rescue/search"); // 成功後跳轉到 search 頁面
+    route.push("/pet/rescue/search"); // 成功後跳轉到 search 頁面
   } catch (error) {
     console.error("表單提交失敗:", error);
     alert("提交失敗，請重試！");
