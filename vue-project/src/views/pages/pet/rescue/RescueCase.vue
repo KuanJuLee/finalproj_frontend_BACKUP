@@ -1,87 +1,137 @@
 <template lang="">
-  <div class="rescue-page">
-    <CaseTitle></CaseTitle>
-    <div class="second-container">
-      <div class="main-content">
-        <CaseItem :caseItem="CaseData"> </CaseItem>
-        <div class="edit-button">
-          <button>要求共同編輯權限</button>
+   <div v-if="rescueCase">
+    <div class="rescue-page">
+    <h1>{{rescueCase.caseTitle}}</h1>
+      <div class="second-container">
+        <div class="main-content">
+          <div>
+          <CaseData v-if="rescueCase" :caseData="rescueCase" />
+          <p v-else>載入中...</p>
         </div>
-        <div class="share-buttons">
-          <a href="#">分享至 Facebook</a>
-          <a href="#">分享至 Line</a>
-          <a href="#">分享至 Twitter</a>
-        </div>
-        <div class="rescue-details">
-          <div class="rescue-reason">
-            <h3>救援原因</h3>
-            <div class="rescue-reason-p">
-              <p>
-                母貓12/7出現無食慾現象，8日再出現已經掛著黏稠口水，胸前毛都濕了，嘗試濕食但咬了一口就掉出來且會用前腳撥嘴巴，9日嘴上依然掛著濃稠口水。
-                以前用誘捕籠抓過她去絕育，嘗試再用似乎效益不彰，希望能夠幫忙
-              </p>
+          <div class="edit-button">
+            
+            <div v-if="canEdit && rescueCase" class="member-buttons">
+              <router-link :to="`/pet/rescueCase/edit/${rescueCase.rescueCaseId}`"  class="router-link">
+                 <button @click="editCase">編輯案件</button>
+              </router-link>
+              <button @click="updateProgress">進度更新</button>
+            </div>
+              <div v-else>
+                <button>要求共同編輯權限</button>
+              </div>
+          </div>
+          <div class="share-buttons">
+            <a href="#">分享至 Facebook</a>
+            <a href="#">分享至 Line</a>
+          </div>
+          <div class="rescue-details">
+            <div class="rescue-reason">
+              <CaseRescueReason v-if="rescueCase" :rescueReason="rescueCase" />
+              
+            </div>
+            <div class="rescue-progress">
+              <h3>救援進度</h3>
             </div>
           </div>
-          <div class="rescue-progress">
-            <h3>救援進度</h3>
+          <div class="comments-section">
+            <h3>留言區</h3>
+            <textarea placeholder="新增留言..."></textarea>
+            <button>提交留言</button>
           </div>
         </div>
-        <div class="comments-section">
-          <h3>留言區</h3>
-          <textarea placeholder="新增留言..."></textarea>
-          <button>提交留言</button>
-        </div>
-      </div>
 
-      <div class="sidebar">
-        <div class="support-button">
-          <RouterLink to="/pet/rescue/add" class="button-link">
-            新增救援資訊
-          </RouterLink>
-        </div>
-        <div class="advertisement">
-          <p>工商</p>
-          <!-- <img src="@" alt="廣告圖片" /> -->
+        <div class="sidebar">
+          <div class="support-button">
+            <RouterLink to="/pet/rescue/add" class="button-link">
+              新增救援資訊
+            </RouterLink>
+          </div>
+          <div class="advertisement">
+            <p>工商</p>
+            <!-- <img src="@" alt="廣告圖片" /> -->
+          </div>
         </div>
       </div>
     </div>
-  </div>
+</div>
+<p v-else>案件資料載入中...</p>
 </template>
-<script setup>
-import CaseTitle from "@/components/pet/rescue/case/CaseTitle.vue";
-import CaseItem from "../../../../components/pet/rescue/search/CaseItem.vue";
-import { ref, onMounted } from "vue";
-import { useRoute } from "vue-router";
-import axios from "axios";
-
-const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+<script setup> 
+import { ref, onMounted, computed } from 'vue';
+import { useRoute } from 'vue-router';
+import axios from 'axios';
+import CaseData from '../../../../components/pet/rescue/case/CaseData.vue';
+import CaseRescueProgress from '../../../../components/pet/rescue/case/CaseRescueProgress.vue';
+import CaseRescueReason from '../../../../components/pet/rescue/case/CaseRescueReason.vue';
+import useUserStore from '@/stores/user.js'; // 載入 Pinia 的 user store
 
 const route = useRoute();
-const CaseData = ref({});
+const rescueCase = ref({});
+const userStore = useUserStore(); // 取得 Pinia 狀態
 
-// 根據案件 ID 請求後端數據
-const fetchCaseData = async () => {
-  try {
-    const response = await axios.get(
-      `${VITE_API_BASE_URL}/RescueCase/search/${route.params.id}`
-    );
-    CaseData.value = response.data;
-  } catch (error) {
-    console.error("無法獲取案件資料:", error);
-  }
+// 獲取當前登入的 memberId
+const userMemberId = computed(() => {
+  console.log("從pinia抓到memberId", userStore.memberId);
+  return userStore.memberId});
+
+// 判斷是否顯示「編輯案件」與「進度更新」按鈕
+const canEdit = computed(() => {
+  console.log("案件會員id為", rescueCase.value.memberId);
+  console.log("進入會員id為", userMemberId.value);
+  return rescueCase.value && userMemberId.value === rescueCase.value.memberId;
+});
+
+// 編輯案件功能
+const editCase = () => {
+  console.log("進入編輯模式");
 };
 
-onMounted(() => {
-  fetchCaseData();
+// 進度更新功能
+const updateProgress = () => {
+  console.log("進入進度更新模式");
+};
+
+
+onMounted(async () => {
+  const caseId = route.params.id;
+  try {
+    const response = await axios.get(`http://localhost:8080/RescueCase/search/${caseId}`);
+    rescueCase.value = response.data || {};  //// 確保 rescueCase 不為 null，會導致傳遞給子組件報錯
+    rescueCase.value.casePictures = rescueCase.value.casePictures || [];
+    console.log("案件資訊為",response.data);
+  } catch (error) {
+    console.error("載入案件失敗", error);
+  }
 });
 </script>
 
 <style scoped>
-.rescue-page {
-  margin: 0 auto;
-  max-width: 1200px;
+
+
+.member-buttons{
+  display: flex;         /* 使用 Flexbox */
+  gap: 30px;             /* 設置按鈕間距 */
+  justify-content: center;
 }
 
+.member-buttons button,
+.member-buttons .router-link {
+  flex: 1; /* 讓按鈕平均分配可用空間 */
+  text-align: center; /* 讓按鈕文字置中 */
+  min-width: 180px; /* 設置最小寬度，避免按鈕太小 */
+}
+
+h1 {
+  font-size: 30px;
+  font-weight: 900;
+  margin-bottom: 60px;
+}
+
+
+.rescue-page {
+  margin: 35px auto;
+  max-width: 1200px;
+}
 .sidebar {
   flex: 1 1 20%;
   max-width: 100%;
@@ -176,14 +226,14 @@ onMounted(() => {
 .rescue-details {
   margin-top: 70px;
   border: 5px solid transparent;
-  border-image: repeating-linear-gradient(
+  /* border-image: repeating-linear-gradient(
       50deg,
       rgb(194, 188, 161) 0,
       rgb(224, 218, 191) 20px,
       transparent 10px,
       transparent 30px
     )
-    80;
+    80; */
   border-radius: 8px;
   padding: 20px;
 }
@@ -197,6 +247,7 @@ onMounted(() => {
 }
 
 .rescue-reason h3 {
+  font-size: 20px;
   font-weight: 500;
 }
 

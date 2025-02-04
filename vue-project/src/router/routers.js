@@ -6,6 +6,7 @@ import Forbidden from '@/views/Forbidden.vue';
 import Login from '@/views/secure/Login.vue';
 import Product from '@/views/pages/Products.vue';
 import RescueCase from '@/views/pages/pet/rescue/RescueCase.vue';
+import EditRescueCase from '../views/pages/pet/rescue/EditRescueCase.vue';
 import RescueSearch from '@/views/pages/pet/rescue/RescueSearch.vue';
 import MemberCenter from '@/views/secure/MemberCenter.vue';
 import LineMessage from '@/views/secure/LineMessage.vue';  
@@ -19,7 +20,8 @@ const routes = [
   { path: "/secure/login", component: Login, name: "secure-login-link" },
   { path: "/pages/products", component: Product, name: "pages-products-link" },
   { path: "/pet/rescue/search", component: RescueSearch, name: "pet-rescueSearch-link"}, 
-  { path: "/pet/rescueCase/:id", component: RescueCase, name: "pet-rescueCase-link",  props: true},  // 使用 props 傳遞參數產生動態路由
+  { path: "/pet/rescueCase/:id", component: RescueCase, name: "pet-rescueCase-link",  props: true},  // 使用 props 傳遞參數產生動態路由(新增案件)
+  { path: "/pet/rescueCase/edit/:id", component: EditRescueCase, name: "pet-rescueCase-edit-link",  props: true},  // 使用 props 傳遞參數產生動態路由(編輯案件)
   { path:"/member-center", component: MemberCenter, name: "member-center-link" },
   { path:"/advanced-settings", component: LineMessage, name: "advanced-settings-link"},
   { path:"/pet/rescue/add", component: NewRescueCase, name: "newRescueCase-link"},

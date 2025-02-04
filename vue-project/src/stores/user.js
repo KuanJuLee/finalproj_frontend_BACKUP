@@ -52,7 +52,32 @@ const useUserStore = defineStore("user", () => {
         }
     }
 
-    //從token中解析memberId
+    // 從 token 解析 memberId
+    const memberId = computed(() => {
+        if (!token.value) {
+            console.log("❌ Token 不存在");
+            return null;
+        }
+    
+        try {
+            const payload = JSON.parse(atob(token.value.split('.')[1])); // 解析 JWT payload
+            console.log("✅ 解析出的 Token Payload:", payload);
+    
+            // `sub` 是 JSON 字串，需要再解析一次  sub : "{\"email\":\"alice@lab.com\",\"memberId\":3}"
+            if (payload.sub) {
+                const subData = JSON.parse(payload.sub); // 解析 `sub` 內的 JSON
+                console.log("🔍 解析出的 subData:", subData);
+                return subData.memberId || null; // 提取 memberId
+            }
+    
+            return null;
+        } catch (error) {
+            console.error("❌ 解析 token 失敗:", error);
+            return null;
+        }
+    });
+
+
 
     // 判斷是否已登入且在時效內（根據 token 判斷） 驗證token是否有效邏輯放在後端，從前端傳request時就會被驗證
     const isLogin = computed(() => {
@@ -67,11 +92,12 @@ const useUserStore = defineStore("user", () => {
         setToken,
         logout,
         validateToken,
+        memberId,
     }
 },
     {
         persist: {
-            storage: localStorage, paths: ["email","token"]    // 持久化 email 和 token
+            storage: localStorage, paths: ["email","token" ]    // 持久化 email 和 token
         }
     });
 export default useUserStore;    
