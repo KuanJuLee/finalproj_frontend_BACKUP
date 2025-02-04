@@ -123,14 +123,16 @@ onMounted(async () => {
 
 h1 {
   font-size: 30px;
-  font-weight: 900;
+  font-weight: 700;
   margin-bottom: 60px;
+  letter-spacing: 1px;
 }
 
 
 .rescue-page {
   margin: 35px auto;
   max-width: 1200px;
+ 
 }
 .sidebar {
   flex: 1 1 20%;

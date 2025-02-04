@@ -29,11 +29,11 @@
       </div>
       <div class="case-footer">
         <p>
-          發文者：<span class="author">{{ caseItem.memberNickName }}</span>
+          <font-awesome-icon icon="fa-solid fa-circle-user"  class="user-icon" />發文者：<span class="author">{{ caseItem.memberNickName }}</span>
         </p>
         <div class="views-and-follows">
-          <span>👀 {{ caseItem.viewCount || 0 }}</span>
-          <span>❤️ 追蹤 ({{ caseItem.follow || 0 }})</span>
+          <font-awesome-icon icon="fa-solid fa-eye" class="view-icon"/><span>{{ caseItem.viewCount || 0 }}</span>
+          <font-awesome-icon icon="fa-solid fa-heart" class="heart-icon" /><span>追蹤 ({{ caseItem.follow || 0 }})</span>
         </div>
       </div>
     </div>
@@ -136,6 +136,26 @@ a {
 
 .author {
   color: #afa66b;
+}
+
+.user-icon{
+    margin-right: 6px;
+    color:#dbdddc;
+    font-size: 24px;
+}
+
+
+.view-icon{
+    margin-right: 3px;
+    color:#dbdddc;
+    font-size: 20px;
+}
+
+.heart-icon{
+
+    margin-right: 3px;
+    color:#ed6c6c;
+    font-size: 20px;
 }
 
 .post {

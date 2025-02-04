@@ -12,9 +12,9 @@ import './assets/styles/global.css'; //全局樣式表
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 // Import specific icons
-import { faUser, faTrash, faEdit, faCircleXmark, faCirclePlus, faImage,  faThumbtack,  faCircleUser, faEye, faHeart } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faTrash, faEdit, faCircleXmark, faCirclePlus, faImage,  faThumbtack,  faCircleUser, faEye, faHeart, faEllipsis } from '@fortawesome/free-solid-svg-icons';
 //選擇性地添加需要的圖標
-library.add(faUser, faTrash, faEdit, faCircleXmark,faCirclePlus,faImage,faThumbtack,faCircleUser, faEye, faHeart);
+library.add(faUser, faTrash, faEdit, faCircleXmark,faCirclePlus,faImage,faThumbtack,faCircleUser, faEye, faHeart,faEllipsis);
 
 const pinia = createPinia();
 pinia.use(piniaPluginPersistedstate)
