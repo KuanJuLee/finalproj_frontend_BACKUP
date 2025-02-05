@@ -24,6 +24,7 @@
       </router-link>
       <div class="post-details-p">
         <p>動物類別：{{ caseItem.species }}</p>
+        <p>動物品種：{{ caseItem.breed }}</p>
         <p>救援需求：{{ caseItem.rescueDemands.join(" ") }}</p>
         <p>通報人可負擔事項：{{ caseItem.canAffords.join("、") }}</p>
       </div>
@@ -161,9 +162,9 @@ a {
 .post {
   display: flex;
   flex: 0 0 80%;
-  margin-bottom: 50px;
-  margin-top: 50px;
-  padding-bottom: 35px;
+  margin-bottom: 20px;
+  margin-top: 40px;
+  padding-bottom: 40px;
   border-bottom: #eae9e9 2px solid;
 }
 

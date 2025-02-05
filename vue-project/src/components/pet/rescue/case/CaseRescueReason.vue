@@ -1,9 +1,11 @@
 <template>
-  <h3>救援原因</h3>
-  <div>
-    <p>
-      {{ rescueReason.rescueReason }}
-    </p>
+  <div class="rescue-content">
+    <h3>救援原因</h3>
+    <div>
+      <p>
+        {{ rescueReason.rescueReason }}
+      </p>
+    </div>
   </div>
 </template>
 <script setup>
@@ -16,10 +18,17 @@ defineProps({
 });
 </script>
 <style scoped>
-
 h3 {
   font-size: 20px;
   font-weight: 500;
 }
 
+p {
+  font-size: 16px;
+  margin-top: 30px;
+}
+
+.rescue-content{
+  margin-left: 30px;
+}
 </style>

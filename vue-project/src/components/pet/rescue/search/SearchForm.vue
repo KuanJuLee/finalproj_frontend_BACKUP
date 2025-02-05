@@ -111,6 +111,9 @@
 import { ref, reactive, onMounted, computed, watch } from "vue";
 import axios from "axios";
 
+
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
 // 定義 emit 事件
 const emit = defineEmits(["search"]);
 
@@ -142,7 +145,7 @@ onMounted(() => {
 //提取毛色資料
 const fetchFurColors = async () => {
   try {
-    const response = await axios.get("http://localhost:8080/pet/allFurColor");
+    const response = await axios.get(`${baseUrl}/pet/allFurColor`);
     furColors.value = response.data;
     console.log("毛色資料1:", furColors.value);
     console.log("毛色資料2:", furColors.value[0].furColor);
@@ -154,7 +157,7 @@ const fetchFurColors = async () => {
 //提取縣市資料
 const fetchCities = async () => {
   try {
-    const response = await axios.get("http://localhost:8080/pet/allCity");
+    const response = await axios.get(`${baseUrl}/pet/allCity`);
     cities.value = response.data;
   } catch (error) {
     console.error("無法獲取縣市資料:", error);
@@ -170,7 +173,7 @@ const fetchDistricts = async (selectedCityId) => {
   }
   try {
     const response = await axios.get(
-      `http://localhost:8080/pet/districtAreasByCity/${selectedCityId}`
+      `${baseUrl}/pet/districtAreasByCity/${selectedCityId}`
     );
     districts.value = response.data;
   } catch (error) {
@@ -186,7 +189,7 @@ watch(cityId, (newCityId) => {
 //提取品種資料
 const fetchBreeds = async () => {
   try {
-    const response = await axios.get("http://localhost:8080/pet/allBreed");
+    const response = await axios.get(`${baseUrl}/pet/allBreed`);
     breeds.value = response.data;
   } catch (error) {
     console.error("無法獲取品種資料:", error);
@@ -196,7 +199,7 @@ const fetchBreeds = async () => {
 //提取救援狀態資料並篩選救援所需
 const fetchCaseStates = async () => {
   try {
-    const response = await axios.get("http://localhost:8080/pet/allCaseState");
+    const response = await axios.get(`${baseUrl}/pet/allCaseState`);
     caseStates.value = response.data;
   } catch (error) {
     console.error("無法獲取救援狀態資料:", error);
@@ -256,6 +259,22 @@ const resetForm = () => {
   districtId.value = "";
   selectedSpecies.value = [];
   suspLost.value = 0;
+
+  //除了重製搜尋條件外，也讓所有案件重製(變回查詢全部案件)
+  const searchParams = {
+    keyword: keyword.value,
+    furColorId: furColorId.value,
+    caseStateId: caseStateId.value,
+    cityId: cityId.value,
+    districtAreaId: districtId.value,
+    speciesId: selectedSpecies.value,
+    suspLost:suspLost.value,
+    breedId:selectedBreed.value
+  };
+  console.log("搜尋參數：", searchParams);
+  // 傳遞給父組件
+  emit("search", searchParams);
+
 };
 
 
@@ -264,9 +283,9 @@ const resetForm = () => {
 <style scoped>
 .search-form {
   /* background-color: #f9f9f9; */
-  padding: 20px;
+  padding: 0 20px 0 20px; 
   border-radius: 8px;
-  /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
+  margin-bottom: 0;
 }
 
 .input-group {
@@ -324,7 +343,7 @@ const resetForm = () => {
 .tip {
   font-size: 18px;
   color: #262626;
-  background-color: #f1e7cb;
+  background-color: #fcf4df;
   padding: 10px;
   /* border: 1px solid #ffe0b2; */
   border-radius: 4px;
@@ -355,12 +374,12 @@ const resetForm = () => {
   padding: 8px 12px;
   border-radius: 4px;
   cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
 .btn-reset:hover {
-  background-color: #858285;
+  background-color: #636163;
   color: #fff;
-  border: none;
 }
 
 .btn-search {
@@ -372,9 +391,10 @@ const resetForm = () => {
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  transition: background-color 0.2s ease; 
 }
 
 .btn-search:hover {
-  background-color: #f2d17d;
+  background-color: #fadc92;
 }
 </style>

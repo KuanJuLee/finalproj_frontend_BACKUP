@@ -14,7 +14,9 @@
               <router-link :to="`/pet/rescueCase/edit/${rescueCase.rescueCaseId}`"  class="router-link">
                  <button @click="editCase">編輯案件</button>
               </router-link>
+              <router-link :to="`/pet/rescueCase/update/${rescueCase.rescueCaseId}`"  class="router-link">
               <button @click="updateProgress">進度更新</button>
+            </router-link>
             </div>
               <div v-else>
                 <button>要求共同編輯權限</button>
@@ -30,7 +32,15 @@
               
             </div>
             <div class="rescue-progress">
-              <h3>救援進度</h3>
+              <CaseRescueProgress v-if="rescueCase" :rescueProgress="rescueCase" />
+              <!-- 根據進度數據動態生成 ProgressDetail 組件 -->
+              <ProgressDetail
+                v-for="progress in rescueProgressList"
+                :key="progress.rescueProgressId"
+                :progress-detail="progress.progressDetail"    
+                :create-time="progress.createTime"
+                :image-url="progress.imageUrl"
+              />
             </div>
           </div>
           <div class="comments-section">
@@ -63,13 +73,40 @@ import axios from 'axios';
 import CaseData from '../../../../components/pet/rescue/case/CaseData.vue';
 import CaseRescueProgress from '../../../../components/pet/rescue/case/CaseRescueProgress.vue';
 import CaseRescueReason from '../../../../components/pet/rescue/case/CaseRescueReason.vue';
+import ProgressDetail from '../../../../components/pet/rescue/case/ProgressDetail.vue';
 import useUserStore from '@/stores/user.js'; // 載入 Pinia 的 user store
+
+
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const route = useRoute();
 const rescueCase = ref({});
 const userStore = useUserStore(); // 取得 Pinia 狀態
 
-// 獲取當前登入的 memberId
+// 保存案件進度數據
+const rescueProgressList = ref([]);
+
+// 從後端獲取案件進度數據
+const fetchRescueProgress = async () => {
+  try {
+
+    const caseId = route.params.id;  
+    const response = await axios.get(
+      `${baseUrl}/RescueCase/rescueProgress/${caseId}`
+    );
+
+    //打進救援進度結果
+    console.log(response.data);
+
+    // 將返回的數據存入 rescueProgressList
+    rescueProgressList.value = response.data;
+  } catch (error) {
+    console.error("獲取案件進度數據失敗:", error);
+  }
+};
+
+
+// 獲取當前登入的 memberId，進而決定是否顯示案件編輯
 const userMemberId = computed(() => {
   console.log("從pinia抓到memberId", userStore.memberId);
   return userStore.memberId});
@@ -93,10 +130,11 @@ const updateProgress = () => {
 
 
 onMounted(async () => {
+  fetchRescueProgress();  //向後端拿救援案件進度
   const caseId = route.params.id;
   try {
-    const response = await axios.get(`http://localhost:8080/RescueCase/search/${caseId}`);
-    rescueCase.value = response.data || {};  //// 確保 rescueCase 不為 null，會導致傳遞給子組件報錯
+    const response = await axios.get(`${baseUrl}/RescueCase/search/${caseId}`);
+    rescueCase.value = response.data || {};  //確保 rescueCase 不為 null，會導致傳遞給子組件報錯
     rescueCase.value.casePictures = rescueCase.value.casePictures || [];
     console.log("案件資訊為",response.data);
   } catch (error) {
@@ -105,9 +143,8 @@ onMounted(async () => {
 });
 </script>
 
+
 <style scoped>
-
-
 .member-buttons{
   display: flex;         /* 使用 Flexbox */
   gap: 30px;             /* 設置按鈕間距 */
@@ -124,7 +161,7 @@ onMounted(async () => {
 h1 {
   font-size: 30px;
   font-weight: 700;
-  margin-bottom: 60px;
+  margin-bottom: 40px;
   letter-spacing: 1px;
 }
 
@@ -198,7 +235,6 @@ h1 {
   flex: 18; /* 主內容區域占 3 倍空間 */
   display: flex;
   flex-direction: column; /* 垂直排列 SearchForm 和 CaseList */
-  gap: 40px; /* 兩個元素之間的間距 */
 }
 
 .edit-button {
@@ -227,34 +263,18 @@ h1 {
 
 .rescue-details {
   margin-top: 70px;
-  border: 5px solid transparent;
-  /* border-image: repeating-linear-gradient(
-      50deg,
-      rgb(194, 188, 161) 0,
-      rgb(224, 218, 191) 20px,
-      transparent 10px,
-      transparent 30px
-    )
-    80; */
   border-radius: 8px;
   padding: 20px;
 }
 
 .rescue-reason {
-  border-bottom: 1px solid #ddd;
-}
-
-.rescue-reason-p {
-  margin: 30px;
-}
-
-.rescue-reason h3 {
-  font-size: 20px;
-  font-weight: 500;
+  padding-bottom: 30px;
+  border-bottom: 3px solid #ddd;
 }
 
 .rescue-progress {
-  margin: 30px 0;
+  padding-bottom: 30px;
+  border-bottom: 3px solid #ddd;
 }
 
 .rescue-progress h3 {

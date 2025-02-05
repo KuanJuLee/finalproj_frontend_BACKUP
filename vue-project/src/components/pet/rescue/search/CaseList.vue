@@ -79,7 +79,7 @@ const handleScroll = () => {
   }
 };
 
-// 監聽用戶傳來搜尋條件searchParams的變化，更新案件數據
+// 監聽用戶傳來搜尋條件searchParams的變化，更新案件數據(包含排序順和篩選條件)
 watch(
   () => props.searchParams,
   async (newParams) => {
@@ -98,12 +98,12 @@ watch(
     try {
       const response = await axios.post(
         `${baseUrl}/RescueCase/search/infinite`,
-        cleanedParams,
+        cleanedParams.searchParams,
         {
           params: {
             offset: 0,
             limit: 10,
-            sortOrder: "desc",
+            sortOrder: cleanedParams.sortOrder || "desc",
           },
         }
       );

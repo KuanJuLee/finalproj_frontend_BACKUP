@@ -7,11 +7,13 @@ import Login from '@/views/secure/Login.vue';
 import Product from '@/views/pages/Products.vue';
 import RescueCase from '@/views/pages/pet/rescue/RescueCase.vue';
 import EditRescueCase from '../views/pages/pet/rescue/EditRescueCase.vue';
+import NewRescueProgress from '../views/pages/pet/rescue/NewRescueProgress.vue';
 import RescueSearch from '@/views/pages/pet/rescue/RescueSearch.vue';
 import MemberCenter from '@/views/secure/MemberCenter.vue';
 import LineMessage from '@/views/secure/LineMessage.vue';  
 import NewRescueCase from '../views/pages/pet/rescue/NewRescueCase.vue';
 import GoogleMap from '@/views/pages/pet/map/GoogleMap.vue';
+
 
 const routes = [
   { path: "/", component: Home, name: "home-link" },
@@ -26,6 +28,7 @@ const routes = [
   { path:"/advanced-settings", component: LineMessage, name: "advanced-settings-link"},
   { path:"/pet/rescue/add", component: NewRescueCase, name: "newRescueCase-link"},
   { path:"/pet/map", component: GoogleMap, name: "googleMap-link"},
+  {path:"/pet/rescueCase/update/:id", component: NewRescueProgress, name: "newRescueProgress-link"}, // 使用 props 傳遞參數產生動態路由(編輯案件)
 ];
 const route = createRouter({
   routes: routes,

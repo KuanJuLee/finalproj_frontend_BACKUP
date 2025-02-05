@@ -2,7 +2,7 @@
     <div class="post">
     <div class="post-image">
       <img
-        :src="caseData.casePictures?.[0].pictureUrl || '/placeholder-image.jpg'"
+        :src="caseData.casePictures?.[0].pictureUrl"
         :alt="caseData.caseTitle"
       />
     </div>
@@ -22,6 +22,7 @@
         </h2>
       <div class="post-details-p">
         <p>動物類別：{{ caseData.species }}</p>
+        <p>動物品種：{{ caseData.breed }}</p>
         <p>地點: {{ caseData.cityName }}{{ caseData.districtAreaName }}{{caseData.street}} </p>
         <p>救援需求：{{  caseData.rescueDemands?.join("、") || "無資料"}}</p>
         <p>通報人可負擔事項：{{ caseData.canAffords?.join("、") || "無資料"}}</p>
