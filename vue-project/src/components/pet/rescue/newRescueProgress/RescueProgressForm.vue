@@ -47,7 +47,7 @@ console.log("獲取的案件 ID:", caseId);
 // 用來傳送資料給後端   Vue的 reactive會產生 Proxy 物件，可能導致 axios無法正確發送數據，因此要記得轉換
 const form = reactive({
   progressDetail: "",
-  casePictures: [],
+  imageUrl: [],
 });
 
 const submitForm = async () => {
@@ -82,7 +82,7 @@ const submitForm = async () => {
 // 監聽圖片上傳事件
 const ImageUploaded = (backTmpUrl) => {
   console.log("父組件拿到囉!", backTmpUrl);
-  form.casePictures.push(backTmpUrl);
+  form.imageUrl.push(backTmpUrl);
   console.log("新增圖片進表單", form);
 };
 </script>
