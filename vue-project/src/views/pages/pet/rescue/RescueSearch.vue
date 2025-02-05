@@ -3,8 +3,8 @@
     <SearchTitle></SearchTitle>
     <div class="second-container">
       <div class="main-content">
-        <SearchForm></SearchForm>
-        <CaseList> </CaseList>
+        <SearchForm @search="handleSearch"></SearchForm>
+        <CaseList :searchParams="searchParams"> </CaseList>
       </div>
       <div class="sidebar">
         <div class="support-button">
@@ -22,9 +22,19 @@
 </template>
 
 <script setup>
+import { ref } from "vue";
 import SearchTitle from "@/components/pet/rescue/search/SearchTitle.vue";
 import SearchForm from "@/components/pet/rescue/search/SearchForm.vue";
 import CaseList from "@/components/pet/rescue/search/CaseList.vue";
+
+// 搜尋參數
+const searchParams = ref({}); 
+
+// 接收搜尋條件
+const handleSearch = (params) => {
+  searchParams.value = params;
+  console.log("父組件rescueSearch接收到的搜尋參數：", searchParams.value);
+};
 </script>
 
 <style>

@@ -10,6 +10,24 @@
         />
       </div>
       <div class="filters">
+            <input
+              type="text"
+              v-model="selectedBreed"
+              list="breedOptions"
+              placeholder="請輸入或選擇品種"
+              class="input-field"
+            />
+            <datalist id="breedOptions">
+              <option
+                v-for="breed in breeds"
+                :key="breed.breedId"
+                :value="breed.breed"
+              >
+                {{ breed.breed }}
+              </option>
+            </datalist>
+          </div>
+      <div class="filters">
         <select v-model="furColorId" class="dropdown">
           <option value="">選擇毛色</option>
           <option
@@ -71,7 +89,7 @@
           貓
         </label>
         <label>
-          <input type="checkbox" :value="1" @change="updateSuspLost" />
+          <input type="checkbox" :value=true @change="updateSuspLost" />
           走失標記 <span class="optional">(如果浪浪疑似走失，請勾選)</span>
         </label>
       </div>
@@ -93,6 +111,9 @@
 import { ref, reactive, onMounted, computed, watch } from "vue";
 import axios from "axios";
 
+// 定義 emit 事件
+const emit = defineEmits(["search"]);
+
 //往後端送的搜尋條件
 const keyword = ref("");
 const furColorId = ref("");
@@ -100,7 +121,8 @@ const caseStateId = ref("");
 const cityId = ref("");
 const districtId = ref("");
 const selectedSpecies = ref([]); // 儲存選中的物種 ID
-const suspLost = ref(0);
+const suspLost = ref(false);
+const selectedBreed = ref("");
 
 //提取對應表資料
 const furColors = ref([]);
@@ -108,6 +130,7 @@ const cities = ref([]);
 const districts = ref([]);
 const breeds = ref([]);
 const caseStates = ref([]);
+
 
 onMounted(() => {
   fetchFurColors();
@@ -201,9 +224,9 @@ const toggleSpecies = (value) => {
 //走失標記
 const updateSuspLost = (event) => {
   if (event.target.checked) {
-    suspLost.value = 1; // 勾選時設為 1
+    suspLost.value = true; // 勾選時設為true
   } else {
-    suspLost.value = 0; // 取消勾選時設為 0
+    suspLost.value = false; // 取消勾選時設為 0
   }
 };
 
@@ -212,22 +235,30 @@ const onSearch = () => {
   const searchParams = {
     keyword: keyword.value,
     furColorId: furColorId.value,
-    status: status.value,
-    cityId: city.value,
-    districtId: district.value,
-    species: species.value,
+    caseStateId: caseStateId.value,
+    cityId: cityId.value,
+    districtAreaId: districtId.value,
+    speciesId: selectedSpecies.value,
+    suspLost:suspLost.value,
+    breedId:selectedBreed.value
   };
   console.log("搜尋參數：", searchParams);
-  // 傳遞參數至父層或進行 API 請求
+  // 傳遞給父組件
+  emit("search", searchParams);
 };
 
+//重置按鈕
 const resetForm = () => {
   keyword.value = "";
-  status.value = "";
-  city.value = "";
-  district.value = "";
-  species.value = "";
+  furColorId.value = "";
+  caseStateId.value = "";
+  cityId.value = "";
+  districtId.value = "";
+  selectedSpecies.value = [];
+  suspLost.value = 0;
 };
+
+
 </script>
 
 <style scoped>
