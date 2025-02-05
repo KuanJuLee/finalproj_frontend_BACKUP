@@ -33,8 +33,10 @@
           <font-awesome-icon icon="fa-solid fa-circle-user"  class="user-icon" />發文者：<span class="author">{{ caseItem.memberNickName }}</span>
         </p>
         <div class="views-and-follows">
+        <div class="viewCount">
           <font-awesome-icon icon="fa-solid fa-eye" class="view-icon"/><span>{{ caseItem.viewCount || 0 }}</span>
-          <font-awesome-icon icon="fa-solid fa-heart" class="heart-icon" /><span>追蹤 ({{ caseItem.follow || 0 }})</span>
+        </div>
+         <followButton :follow="caseItem.follow" :caseId="caseItem.rescueCaseId" caseType="rescue"/>
         </div>
       </div>
     </div>
@@ -43,6 +45,7 @@
 
 <script setup>
 import { ref } from "vue";
+import followButton from "../follow/followButton.vue";
 
 //父組件傳遞的案件資訊
 defineProps({
@@ -131,9 +134,18 @@ a {
   font-size: 15px;
 }
 
-.views-and-follows span {
-  margin-right: 16px;
+.case-footer p {
+  width: 100%;
 }
+
+.views-and-follows {
+  display: flex;
+  align-items: center; /* 讓所有子元素垂直居中對齊 */
+  justify-content: flex-end; /* 讓內容靠右對齊 */
+  gap: 5px; /* 控制圖示與按鈕之間的間距 */
+  width: 100%; /* 讓 flex 容器填滿可用空間 */
+}
+
 
 .author {
   color: #afa66b;
@@ -147,7 +159,7 @@ a {
 
 
 .view-icon{
-    margin-right: 3px;
+    margin-right:5px;
     color:#dbdddc;
     font-size: 20px;
 }
@@ -170,6 +182,10 @@ a {
 
 .views {
   color: #333;
+}
+
+.viewCount{
+  margin-right: 10px ;
 }
 
 .info {
