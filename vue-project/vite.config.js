@@ -14,7 +14,7 @@ export default defineConfig({
     }
   },
   server: {
-    host: true, // 或 '0.0.0.0'
+    host: true, // 或 '0.0.0.0' 
     port: 5173, // 你可以自定義 port
   }
 })
