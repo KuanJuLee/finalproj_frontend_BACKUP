@@ -1,7 +1,7 @@
 <template lang="">
   <!-- 沒註冊過也沒有用line登入的，根本看不到此畫面，因為此畫面只在會員中心中，表示一定有memberid -->
   <!-- 目前已限制必須是有LINEID的用戶才能使用message api通知功能，因此只有網站註冊的要先進行line綁定，而沒註冊但使用Line登入的可直接追蹤商家 -->
-  <div>
+  <div class="line-container">
     <!-- 判斷是否已綁定 LineID -->
     <div v-if="!isBound">
       <p>您尚未綁定 LINE，請先進行 LINE 登入：</p>
@@ -11,7 +11,7 @@
       <p>您的 LINE 帳戶已綁定，請點擊下方按鈕追蹤商家：</p>
       <a href="https://line.me/R/ti/p/@310pndih" target="_blank">
         <img
-          height="75"
+          height="55"
           alt="加入好友"
           src="https://scdn.line-apps.com/n/line_add_friends/btn/zh-Hant.png"
         />
@@ -36,6 +36,9 @@ const followStatus = ref(null); // 追蹤狀態，null 表示尚未檢查
 const userToken = ref(""); // 用戶的 Token
 const memberId = ref("");
 
+
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
 // 初始化
 const router = useRouter();
 
@@ -43,8 +46,8 @@ onMounted(async () => {
   //這邊要先確認有無持有memberId，表示註冊過，已將此驗證邏輯放在route.js中做全局攔截
   initializeUser();
   if (memberId.value) {
-    await checkBindingStatus();
-    await checkFollowStatus();
+    await checkBindingStatus();  //從member資料表，對應此memberId有無綁定的lineid，用於決定顯示line登入按鈕或是line加好友按鈕
+    await checkFollowStatus();  //檢查商家line追蹤狀態，從member資料表，對應此memberId的followed欄位是否為true，是則顯示連動成功
   }
 });
 
@@ -78,7 +81,7 @@ function initializeUser() {
 async function checkBindingStatus() {
   try {
     const response = await axios.get(
-      "http://localhost:8080/line/checkBinding",
+      `${baseUrl}/line/checkBinding`,
       {
         headers: { Authorization: `Bearer ${userToken.value}` },
       }
@@ -93,7 +96,7 @@ async function checkBindingStatus() {
 //  方法:檢查商家line追蹤狀態
 async function checkFollowStatus() {
   try {
-    const response = await axios.get("http://localhost:8080/line/checkFollow", {
+    const response = await axios.get(`${baseUrl}/line/checkFollow`, {
       headers: { Authorization: `Bearer ${userToken.value}` },
       params: { memberId: memberId.value },
     });
@@ -110,4 +113,7 @@ function handleBindingSuccess() {
   checkFollowStatus();
 }
 </script>
-<style lang=""></style>
+<style scoped>
+
+
+</style>
