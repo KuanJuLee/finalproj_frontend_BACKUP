@@ -6,6 +6,7 @@ const useUserStore = defineStore("user", () => {
     const token = ref("");
     const email = ref("");
     const isTokenValid = ref(true); // 標記 token 是否有效
+    const baseUrl = import.meta.env.VITE_API_URL;
      
     // 設置 Email
     function setEmail(data) {
@@ -28,12 +29,13 @@ const useUserStore = defineStore("user", () => {
     async function validateToken() {
         if (!token.value) {
         isTokenValid.value = false;
+        console.log("檢查token不存在");
         return false;
         }
 
         try {
         const response = await axios.post(
-            "http://localhost:8080/validateToken",
+            `${baseUrl}/validateToken`,
             {},
             {
             headers: {
@@ -95,9 +97,9 @@ const useUserStore = defineStore("user", () => {
         memberId,
     }
 },
-    {
-        persist: {
-            storage: localStorage, paths: ["email","token" ]    // 持久化 email 和 token
+    { 
+        persist: { //預設存到 localStorage，整個 Store 會被持久化，當頁面刷新，這些數據會自動從 localStorage 讀取
+            storage: localStorage, paths: ["email","token" ]    // 當 email 或 token 被更新時會自動存入 localStorage
         }
     });
 export default useUserStore;    

@@ -9,58 +9,30 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed  } from "vue";
 import axios from "axios";
 import useUserStore from "@/stores/user";
 
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
 const userStore = useUserStore();
 const lineLoginUrl = ref(""); // 儲存 LINE 登入的 URL
-const memberId = ref(""); // 示例用戶 ID，可動態更新
+const memberId = computed(() => userStore.memberId); // 直接從Pinia store解析token取出 memberId
 
-// 登入過的用戶可從 localStorage的 user中解析出Token並提取memberId (token有可能被竄改? 因此盡量不要在前端解析數據來用)
-function getMemberIdFromUser() {
-  const user = localStorage.getItem("user");
-  if (!user) return null;
-  try {
-    const parsedUser = JSON.parse(user);
-    const token = parsedUser.token;
-    if (!token) return null;
 
-    // 解析 JWT Payload
-    const payload = JSON.parse(atob(token.split(".")[1])); // 解碼 Base64 Payload
-    const subject = payload.sub; // 提取 `subject` 字段
-    if (!subject) return null; // 如果 `subject` 不存在，返回 null
-
-    // 解析 `subject` 中的 JSON，提取 `memberId`
-    const subjectData = JSON.parse(subject); // `subject` 是存放 JSON 的字符串
-    return subjectData.memberId; // 返回 `memberId`
-  } catch (error) {
-    console.error("無法解析 Token: ", error);
-    return null;
-  }
-}
 
 // 在組件掛載時，從後端獲取 LINE 授權 URL
 onMounted(async () => {
-  //嘗試解析memberId，傳遞給後端獲得line登入連結(若有memberid，會和產生state存進redis資料庫)
-  memberId.value = getMemberIdFromUser(); //此方法解析出 memberId
-  console.log("解析出memberid為" + memberId.value);
+  console.log("解析出 memberId 為：" + memberId.value); // ✅ 直接使用 Pinia 中的 memberId
 
   try {
-    const response = await axios.get("http://localhost:8080/line/authorize", {
-      params: { memberId: memberId.value }, //如果有 memberId，將其作為查詢參數傳給後端
+    const response = await axios.get(`${baseUrl}/line/authorize`, {
+      params: { memberId: memberId.value }, // ✅ 直接從 Pinia 取值
     });
     lineLoginUrl.value = response.data;
-    console.log("line登入urL為" + lineLoginUrl.value);
+    console.log("LINE 登入 URL 為：" + lineLoginUrl.value);
   } catch (error) {
     console.error("無法獲取 LINE 登入連結: ", error);
-
-    // 登入完嘗試從 URL 中解析 Token 並存儲
-    //   const params = new URLSearchParams(window.location.search);
-    //   const token = params.get("token");
-    //   if (token) {
-    //     localStorage.setItem("Authorization", `Bearer ${token}`);
-    //   }
   }
 });
 </script>

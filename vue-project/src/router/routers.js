@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import useUserStore from "@/stores/user";
+import Swal from "sweetalert2";
 import Home from "@/views/Home.vue";
 import NotFound from '@/views/NotFound.vue';
 import Forbidden from '@/views/Forbidden.vue';
@@ -39,16 +40,38 @@ const route = createRouter({
 // 全域前置守衛，進行用戶token驗證(持有&時效合法)
 route.beforeEach(async (to, from, next) => {
   const userStore = useUserStore();
-  const publicPages = ["/secure/login","/403","/","/pet/rescue/search","/pet/map","/pet/rescueCase"]; // 不需要驗證的路由
-  const authRequired = !publicPages.some(page => to.path.startsWith(page));
+  const publicPages = [
+    "/secure/login",
+    "/403",
+    "/",
+    "/pet/rescue/search",
+    "/pet/map",
+    "/member-center",
+  ];  // 不需要驗證的路由
+  
+
+  //用來判斷救援案件頁面路徑，需要是公開
+  const isRescueCaseDetail = to.path.startsWith("/pet/rescueCase/") && to.path.split("/").length === 4; 
+
+
   // 需要驗證的路由，startsWith會包括上述路由所有/**`，some() 會逐個檢查 publicPages 陣列中的每個元素，確保 只要前綴匹配就視為公開頁面
+  const authRequired = !publicPages.includes(to.path) && !isRescueCaseDetail;
+  
 
 
   if (authRequired) {
     const isValid = await userStore.validateToken();    //自定義方法檢查Token是否有效
     if (!isValid) {
       userStore.logout(); // 清除用戶資訊
-      alert("您的登入已過期，請重新登入！");
+
+      // ✅ 使用 SweetAlert2 顯示登入過期提示
+      await Swal.fire({
+      title: "錯誤訊息",
+      text: "請先登入再使用本功能",
+      icon: "warning",
+      confirmButtonText: "確定"
+    });
+
       return next("/secure/login"); // 跳轉到登入頁面
     }
   }

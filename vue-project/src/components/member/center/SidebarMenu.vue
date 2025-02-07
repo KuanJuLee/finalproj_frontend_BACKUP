@@ -16,6 +16,9 @@
   
   <script setup>
   import { useRouter } from "vue-router";
+  import useUserStore from "../../../stores/user";
+
+  const userStore = useUserStore();
   
   const router = useRouter();
   const menuItems = [
@@ -31,6 +34,8 @@
   
   function logout() {
     console.log("執行登出邏輯");
+    userStore.setToken("");
+    userStore.setEmail("");
     router.push("/secure/login");
   }
   </script>
