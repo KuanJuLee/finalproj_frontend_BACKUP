@@ -3,6 +3,7 @@
 /sts-4.27.0.RELEASE/**
 # Compiled class file
 *.class
+/vue-project/node_modules/**
 
 # Log file
 *.log
