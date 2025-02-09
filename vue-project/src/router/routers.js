@@ -4,7 +4,7 @@ import Swal from "sweetalert2";
 import Home from "@/views/Home.vue";
 import NotFound from '@/views/NotFound.vue';
 import Forbidden from '@/views/Forbidden.vue';
-import Login from '@/views/secure/Login.vue';
+import Login from '@/views/secure/Login.vue';   //舊的，先不用了
 import Product from '@/views/pages/Products.vue';
 import RescueCase from '@/views/pages/pet/rescue/RescueCase.vue';
 import EditRescueCase from '../views/pages/pet/rescue/EditRescueCase.vue';
@@ -14,6 +14,10 @@ import MemberCenter from '@/views/secure/MemberCenter.vue';
 import LineMessage from '@/views/secure/LineMessage.vue';  
 import NewRescueCase from '../views/pages/pet/rescue/NewRescueCase.vue';
 import GoogleMap from '@/views/pages/pet/map/GoogleMap.vue';
+import Register from '@/views/pages/Register.vue';
+import MemberCard from '@/views/pages/MemberCard.vue';
+import LoginMember from '../views/secure/LoginMember.vue';
+import LoginAdmin from '../views/secure/LoginAdmin.vue';
 
 
 const routes = [
@@ -30,6 +34,8 @@ const routes = [
   { path:"/pet/rescue/add", component: NewRescueCase, name: "newRescueCase-link"},
   { path:"/pet/map", component: GoogleMap, name: "googleMap-link"},
   {path:"/pet/rescueCase/update/:id", component: NewRescueProgress, name: "newRescueProgress-link"}, // 使用 props 傳遞參數產生動態路由(編輯案件)
+  { path: "/pages/Register", component: Register, name: "register-link" },
+  
 ];
 const route = createRouter({
   routes: routes,

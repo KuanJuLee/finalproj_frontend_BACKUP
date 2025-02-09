@@ -4,7 +4,7 @@
     <tbody>
       <tr>
         <td>ID :</td>
-        <td><input type="text" v-model="email" @keyup.enter="login" /></td>
+        <td><input type="text" v-model="username" @keyup.enter="login" /></td>
         <td>
           <span class="error">{{ message }}</span>
         </td>
@@ -20,10 +20,17 @@
           <button type="button" @click="login">login</button>
         </td>
       </tr>
+      <tr>
+        <RouterLink class="nav-link" to="/secure/loginadmin"
+          >(切換管理員)</RouterLink
+        >
+      </tr>
     </tbody>
   </table>
 
-  <div><lineLogin /></div>
+  <div>
+    <RouterLink class="link" to="/pages/Register">註冊會員</RouterLink>
+  </div>
 </template>
 <script setup>
 import axiosapi from "@/plugins/axios.js";
@@ -31,9 +38,8 @@ import Swal from "sweetalert2";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import useUserStore from "@/stores/user.js";
-import lineLogin from "../../components/member/login/lineLogin.vue";
 
-const email = ref("");
+const username = ref("");
 const password = ref("");
 const message = ref("");
 const router = useRouter();
@@ -42,43 +48,51 @@ const userStore = useUserStore();
 async function login() {
   document.querySelector(".error").innerHTML = "";
   message.value = "";
-  if (email.value == "") {
-    email.value = null;
+  if (username.value == "") {
+    username.value = null;
   }
   if (password.value == "") {
     password.value = null;
   }
   const body = {
-    email: email.value,
+    email: username.value,
     password: password.value,
   };
 
-  //每次嘗試登入都要先把header中清空一次
+  // 清空之前的 header 授權信息
   axiosapi.defaults.headers.authorization = "";
   userStore.setEmail("");
-  userStore.setToken("");
-
-  console.log(body);
 
   try {
     const response = await axiosapi.post(
       "http://localhost:8080/ajax/secure/login",
       body
     );
-    console.log("response", response);
+    console.log("response", response.data);
+
     if (response.data.success) {
+      // 登入成功後顯示訊息
       await Swal.fire({
         title: response.data.message,
         icon: "success",
       });
-      axiosapi.defaults.headers.authorization = "Bearer " + response.data.token;
-      //設定 Axios 的 Authorization 預設標頭，這樣後續所有 使用 axiosapi 發送的請求 都會自動攜帶這個 Token。每次用axiosapi發送 API 請求時，這個 Token 會自動附加到 HTTP Header 中，不需要手動添加
-      userStore.setEmail(response.data.user);
-      userStore.setToken(response.data.token); //記得增添這一條!!!!!!!!!!!!!!!
 
-      console.log(response.data.message);
-      router.push({ path: "/" }); //跳轉回首頁
+      // 儲存登入資訊到 localStorage，將資料轉換成字串格式
+      localStorage.setItem("memberId", response.data.user.memberId); // 儲存 `memberId`
+      localStorage.setItem("email", response.data.user.email); // 儲存 `email`
+      localStorage.setItem("token", response.data.token); // 儲存 JWT Token
+      localStorage.setItem("nickname", response.data.user.nickname); // 儲存 `nickname`
+
+      // 設定 authorization header
+      axiosapi.defaults.headers.authorization = "Bearer " + response.data.token;
+
+      // 儲存使用者資訊到狀態管理 (如果有)
+      userStore.setEmail(response.data.user);
+
+      // 跳轉到會員中心
+      router.push({ path: "/pages/MemberCenter" });
     } else {
+      // 登入失敗，顯示錯誤訊息
       document.querySelector(".error").innerHTML = response.data.message;
       Swal.fire({
         title: response.data.message,
@@ -87,6 +101,7 @@ async function login() {
     }
   } catch (error) {
     console.log("error", error);
+    // 捕獲錯誤並顯示
     Swal.fire({
       title: "執行失敗:" + error.message,
       icon: "error",
