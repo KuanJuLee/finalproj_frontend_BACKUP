@@ -7,19 +7,30 @@ import { computed } from "vue";
 
 const route = useRoute();
 
-
-
 // 定義需要全螢幕顯示的路徑
-const fullWidthRoutes = ["/pet/map", "/advanced-settings"];
+const fullWidthRoutes = ["/pet/map", "/advanced-settings", "/admin"];
 
-// 判斷是否應該應用 `full-width` 樣式
+// 定義需要套用 `.admin` 樣式的頁面
+const adminRoutes = [
+  "/admin/rescueCase",
+  "/admin/adopt-case",
+  "/admin/lostCase",
+  "/admin/rescueAnalysis",
+];
+
+// 判斷是否應用 `admin` 樣式
+const isAdminPage = computed(() => adminRoutes.includes(route.path));
+
+// 判斷是否應用 `full-width` 樣式
 const isFullWidth = computed(() => fullWidthRoutes.includes(route.path));
 </script>
 
 <template>
   <div>
-    <Navigationbar />
-    <div :class="isFullWidth ? 'full-width' : 'container'">
+    <Navigationbar v-if="!$route.meta.hideNavbar" />
+    <div
+      :class="isAdminPage ? 'admin' : isFullWidth ? 'full-width' : 'container'"
+    >
       <RouterView />
     </div>
   </div>
@@ -33,7 +44,7 @@ const isFullWidth = computed(() => fullWidthRoutes.includes(route.path));
   margin: 0 auto;
 }
 
-/* 當 `isFullWidth` 為 true，讓 `.container` 變成全寬 */
+/* 當 `isFullWidth` 為 true，讓 `.container` 變成全寬而且不要有卷軸 */
 .full-width {
   padding: 0;
   margin: 0;
@@ -42,5 +53,16 @@ const isFullWidth = computed(() => fullWidthRoutes.includes(route.path));
   max-width: 100%;
   max-height: 100%;
   overflow: hidden; /* ✅ 隱藏滾動條 */
+}
+
+/*管理員頁面使用樣式*/
+.admin {
+  padding: 0;
+  margin: 0;
+  width: 100vw;
+  height: 100vh;
+  max-width: 100%;
+  max-height: 100%;
+  overflow: auto; /* ✅ 允許滾動 */
 }
 </style>

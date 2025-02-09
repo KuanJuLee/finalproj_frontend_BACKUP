@@ -76,6 +76,11 @@
               會員登入
             </RouterLink>
           </li>
+          <li class="nav-item">
+            <RouterLink class="nav-link active" aria-current="page" to="/admin"
+              >管理員中心</RouterLink
+            >
+          </li>
         </ul>
       </div>
     </div>

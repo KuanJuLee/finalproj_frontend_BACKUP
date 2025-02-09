@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import useUserStore from "@/stores/user";
 import Swal from "sweetalert2";
+
+//前台頁面
 import Home from "@/views/Home.vue";
 import NotFound from '@/views/NotFound.vue';
 import Forbidden from '@/views/Forbidden.vue';
@@ -15,9 +17,16 @@ import LineMessage from '@/views/secure/LineMessage.vue';
 import NewRescueCase from '../views/pages/pet/rescue/NewRescueCase.vue';
 import GoogleMap from '@/views/pages/pet/map/GoogleMap.vue';
 import Register from '@/views/pages/Register.vue';
-import MemberCard from '@/views/pages/MemberCard.vue';
-import LoginMember from '../views/secure/LoginMember.vue';
-import LoginAdmin from '../views/secure/LoginAdmin.vue';
+// import MemberCard from '@/views/pages/MemberCard.vue';
+// import LoginMember from '../views/secure/LoginMember.vue';
+// import LoginAdmin from '../views/secure/LoginAdmin.vue';
+
+//後臺頁面
+import AdminManagement from '../views/AdminManagement.vue';
+import RescueManagement from '@/views/admin/kuan/RescueManagement.vue';
+import RescueAnalysis from '@/views/admin/kuan/RescueAnalysis.vue';
+import LostManament from '@/views/admin/jolin/LostManagement.vue';
+
 
 
 const routes = [
@@ -35,8 +44,17 @@ const routes = [
   { path:"/pet/map", component: GoogleMap, name: "googleMap-link"},
   {path:"/pet/rescueCase/update/:id", component: NewRescueProgress, name: "newRescueProgress-link"}, // 使用 props 傳遞參數產生動態路由(編輯案件)
   { path: "/pages/Register", component: Register, name: "register-link" },
+  //加上 meta 標記，表示這頁面不顯示導航列。
+  //這樣 /admin/* 下面的所有路由都會套用 AdminManagement.vue，讓 Sidebar 固定存在！
+  { path: "/admin", component: AdminManagement, name: "adminManagement-link", meta: { hideNavbar: true },children: [
+    { path: "rescueCase", component: RescueManagement },
+    { path: "lostCase", component: LostManament },
+    { path: "rescueAnalysis", component: RescueAnalysis },
+   
+  ],},
   
 ];
+
 const route = createRouter({
   routes: routes,
   history: createWebHistory(),
@@ -53,6 +71,10 @@ route.beforeEach(async (to, from, next) => {
     "/pet/rescue/search",
     "/pet/map",
     "/member-center",
+    "/admin",
+    "/admin/rescueCase",
+    "/admin/lostCase",
+    "/admin/rescueAnalysis",
   ];  // 不需要驗證的路由
   
 

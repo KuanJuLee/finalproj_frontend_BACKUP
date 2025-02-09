@@ -6,7 +6,7 @@ const useUserStore = defineStore("user", () => {
     const token = ref("");
     const email = ref("");
     const isTokenValid = ref(true); // 標記 token 是否有效
-    const baseUrl = import.meta.env.VITE_API_URL;
+    const baseUrl = import.meta.env.VITE_API_BASE_URL;
      
     // 設置 Email
     function setEmail(data) {
