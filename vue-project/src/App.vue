@@ -2,10 +2,26 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import Navigationbar from "./views/Navigationbar.vue";
-import { useRoute } from "vue-router";
-import { computed } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { computed, onMounted, watchEffect  } from "vue";
+import useUserStore from "@/stores/user";
 
 const route = useRoute();
+const router = useRouter();
+const userStore = useUserStore();
+
+//下列程式用來監聽網址列token變化，用於line登入後擷取token並存入Pinia再存入localStorage
+onMounted(() => {
+   // 使用 watchEffect() 監聽 token 變化，確保提取後再清除 URL
+  watchEffect(() => {
+    const token = route.query.token;
+    if (token) {
+      console.log("Token 為:", token);
+      userStore.setToken(token); // 儲存 Token
+      router.replace({ path: "/", query: {} }); // 移除 Query 參數
+    }
+  });
+});
 
 // 定義需要全螢幕顯示的路徑
 const fullWidthRoutes = ["/pet/map", "/advanced-settings", "/admin"];

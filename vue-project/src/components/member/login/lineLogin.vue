@@ -10,15 +10,17 @@
 
 <script setup>
 import { ref, onMounted, computed  } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import axios from "axios";
 import useUserStore from "@/stores/user";
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
+const route = useRoute();
+const router = useRouter();
 const userStore = useUserStore();
 const lineLoginUrl = ref(""); // 儲存 LINE 登入的 URL
 const memberId = computed(() => userStore.memberId); // 直接從Pinia store解析token取出 memberId
-
 
 
 // 在組件掛載時，從後端獲取 LINE 授權 URL
@@ -34,6 +36,8 @@ onMounted(async () => {
   } catch (error) {
     console.error("無法獲取 LINE 登入連結: ", error);
   }
+
+
 });
 </script>
 
