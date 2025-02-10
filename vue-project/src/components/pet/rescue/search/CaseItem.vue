@@ -27,6 +27,7 @@
         <p>動物品種：{{ caseItem.breed }}</p>
         <p>救援需求：{{ caseItem.rescueDemands.join(" ") }}</p>
         <p>通報人可負擔事項：{{ caseItem.canAffords.join("、") }}</p>
+ 
       </div>
       <div class="case-footer">
         <p>

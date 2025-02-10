@@ -6,7 +6,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted  } from "vue";
+import { ref, onMounted, watch  } from "vue";
 import axios from "axios";
 import { useRoute } from "vue-router";
 import Swal from 'sweetalert2';
@@ -17,11 +17,12 @@ const baseUrl = import.meta.env.VITE_API_BASE_URL;
 const props = defineProps({
   follow: {
     type: Number,
-    required: true,
+    required: false, //改為非必填，避免 Vue 警告 因為可能案件data還沒從後端抓來，就沒有follow值
+    default: 0, // 給預設值，避免還沒有值的時候為null，不符合Number
   },
   caseId: {
     type: Number,
-    required: true,
+    required: false, // ✅ 避免 `caseId` 為 undefined 時報錯
   },
   caseType: {
     type: String,
@@ -60,10 +61,47 @@ const getAuthToken = () => {
   return parsedUser ? parsedUser.token : null;
 };
 
+
+// **監聽 `props.follow`，當值變化時更新 `followCount`**
+watch(
+  () => props.follow,
+  async(newFollow) => {
+    try {
+    if (newFollow !== undefined) {
+      followCount.value = newFollow;
+      console.log("追蹤數更新:", newFollow);
+    }
+  } catch (error) {
+      console.error("監聽 caseId 變更時發生錯誤:", error);
+    }
+  },
+  { immediate: true }
+);
+
+// **監聽 `props.caseId`，當 `caseId` 更新時，重新檢查追蹤狀態**
+watch(
+  () => props.caseId,
+  async (newCaseId) => {
+    try {
+      if (newCaseId) {
+        console.log("監聽到 caseId 變更，執行 checkIfFollowing...");
+        await checkIfFollowing(); // ✅ 確保這是 `async`，並用 `await` 等待
+      }
+    } catch (error) {
+      console.error("監聽 caseId 變更時發生錯誤:", error);
+    }
+  },
+  { immediate: true }
+);
+
 // **初始化時檢查是否已追蹤**
 const checkIfFollowing = async () => {
   const token = getAuthToken();
-  if (!token) return; // 沒登入直接返回
+  if (!token || !props.caseId || !props.caseType) return; // ✅ 確保所有數據都準備好
+
+console.log("token為",token);
+console.log("caseId為",props.caseId);
+console.log("caseType為",props.caseType);
 
   try {
     const response = await axios.get(`${baseUrl}/Case/follow/status`, {

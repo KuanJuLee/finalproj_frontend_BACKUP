@@ -97,7 +97,7 @@ const searchParamsWithSort = computed(() => ({
   display: inline-block;
   font-weight: 500;
   letter-spacing: 2px; /* 增加字元之間的距離 */
-  background-color: #c6bc77;
+  background-color: #dbb44f;
   color: white;
   padding: 10px 20px;
   font-size: 20px;

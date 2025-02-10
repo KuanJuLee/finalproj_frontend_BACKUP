@@ -56,7 +56,7 @@ const isFullWidth = computed(() => fullWidthRoutes.includes(route.path));
 /* 全域樣式 */
 .container {
   background-color: #ffffff;
-  padding: 0 100px;
+  padding: 0 70px;
   margin: 0 auto;
 }
 
