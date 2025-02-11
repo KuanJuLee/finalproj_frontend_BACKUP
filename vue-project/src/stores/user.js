@@ -5,6 +5,7 @@ import axios from "axios";
 const useUserStore = defineStore("user", () => {
     const token = ref("");
     const email = ref("");
+    const role = ref("");
     const isTokenValid = ref(true); // 標記 token 是否有效
     const baseUrl = import.meta.env.VITE_API_BASE_URL;
      
@@ -17,6 +18,17 @@ const useUserStore = defineStore("user", () => {
      function setToken(data) {
         token.value = data;
       }
+
+    // 登入時設置用戶角色做權限驗證
+    function setRole(data) {
+        role.value = data;
+      }
+
+
+      //做管理員權限判斷
+      function isAdmin() {
+        return this.role === 'admin';
+      };
 
       // 清除用戶信息（登出）
     function logout() {
@@ -95,6 +107,8 @@ const useUserStore = defineStore("user", () => {
         logout,
         validateToken,
         memberId,
+        setRole,
+        isAdmin
     }
 },
     { 

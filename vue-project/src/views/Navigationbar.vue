@@ -76,7 +76,7 @@
               會員登入
             </RouterLink>
           </li>
-          <li class="nav-item">
+          <li class="nav-item" v-if="userStore.isAdmin()">
             <RouterLink class="nav-link active" aria-current="page" to="/admin"
               >管理員中心</RouterLink
             >
