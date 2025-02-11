@@ -1,10 +1,13 @@
 <script setup>
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
-import Navigationbar from "./views/Navigationbar.vue";
+import { RouterLink, RouterView } from 'vue-router';
 import { useRoute, useRouter } from "vue-router";
-import { computed, onMounted, watchEffect  } from "vue";
 import useUserStore from "@/stores/user";
+import Navigationbar from "./views/Navigationbar_old.vue";
+import { computed, onMounted, watchEffect  } from "vue";
+import TopButton from "./views/TopButton.vue";
+import Footer from "./views/Footer.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -23,8 +26,17 @@ onMounted(() => {
   });
 });
 
+//設置管理員後台不要有背景圖
+watchEffect(() => {
+  if (route.path.startsWith("/admin")||route.path.startsWith("/pet")) {
+    document.body.classList.add("admin-page");  // 在 /admin 頁面加上 class
+  } else {
+    document.body.classList.remove("admin-page");  // 其他頁面移除 class
+  }
+});
+
 // 定義需要全螢幕顯示的路徑
-const fullWidthRoutes = ["/pet/map", "/advanced-settings", "/admin"];
+const fullWidthRoutes = ["/","/pages/MemberCenter","/pet/map", "/advanced-settings", "/admin"];
 
 // 定義需要套用 `.admin` 樣式的頁面
 const adminRoutes = [
@@ -32,6 +44,8 @@ const adminRoutes = [
   "/admin/adopt-case",
   "/admin/lostCase",
   "/admin/rescueAnalysis",
+  "/admin",
+  "/adopt"
 ];
 
 // 判斷是否應用 `admin` 樣式
@@ -39,25 +53,28 @@ const isAdminPage = computed(() => adminRoutes.includes(route.path));
 
 // 判斷是否應用 `full-width` 樣式
 const isFullWidth = computed(() => fullWidthRoutes.includes(route.path));
+
+
 </script>
 
 <template>
-  <div>
-    <Navigationbar v-if="!$route.meta.hideNavbar" />
+    <Navigationbar v-if="!$route.meta.hideNavbar"></Navigationbar>
     <div
       :class="isAdminPage ? 'admin' : isFullWidth ? 'full-width' : 'container'"
     >
       <RouterView />
     </div>
-  </div>
+    <TopButton />
+    <Footer />
 </template>
 
-<style>
+<style scoped>
 /* 全域樣式 */
 .container {
   background-color: #ffffff;
   padding: 0 70px;
   margin: 0 auto;
+ 
 }
 
 /* 當 `isFullWidth` 為 true，讓 `.container` 變成全寬而且不要有卷軸 */
@@ -69,6 +86,7 @@ const isFullWidth = computed(() => fullWidthRoutes.includes(route.path));
   max-width: 100%;
   max-height: 100%;
   overflow: hidden; /* ✅ 隱藏滾動條 */
+  background-image: none !important;
 }
 
 /*管理員頁面使用樣式*/
@@ -80,5 +98,6 @@ const isFullWidth = computed(() => fullWidthRoutes.includes(route.path));
   max-width: 100%;
   max-height: 100%;
   overflow: auto; /* ✅ 允許滾動 */
+  background-image: none !important;
 }
 </style>

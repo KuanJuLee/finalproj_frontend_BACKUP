@@ -23,4 +23,5 @@ import Announcements from "@/components/member/center/Announcements.vue";
 import SidebarMenu from "@/components/member/center/SidebarMenu.vue";
 </script>
 
-<style></style>
+<style>
+</style>

@@ -6,7 +6,7 @@ import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "bootstrap-icons/font/bootstrap-icons.css";
-import './assets/styles/global.css'; //全局樣式表
+import "@/assets/petmain.css"; //全局樣式表
 
 // Import Font Awesome
 import { library } from '@fortawesome/fontawesome-svg-core';
