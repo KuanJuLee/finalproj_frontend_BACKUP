@@ -13,8 +13,6 @@ export default defineConfig({
       output: {
         manualChunks: {
           "vendor": ["vue", "vue-router", "pinia"],  // ✅ Vue 核心拆分
-          "ui": ["element-plus", "ant-design-vue"],  // ✅ UI 框架拆分
-          "charts": ["echarts"], // ✅ 圖表拆分
         },
       },
     },
