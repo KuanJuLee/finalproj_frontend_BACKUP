@@ -31,7 +31,7 @@ import Swal from "sweetalert2";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import useUserStore from "@/stores/user.js";
-import LineLogin from "../../components/member/login/LineLogin.vue";
+import LineLogin from "@/components/member/login/LineLogin.vue";
 
 const email = ref("");
 const password = ref("");
