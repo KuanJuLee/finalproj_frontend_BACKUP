@@ -5,6 +5,7 @@ COPY package.json package-lock.json ./
 RUN npm install
 COPY . .             # 將Jenkins 內的 ./frontend/vue-project 目錄複製到 /app
 RUN npm run build               # 執行 npm install 和 npm run build，產生 /app/dist/
+CMD ["sh"]
 
 # 2. 使用 Nginx 作為前端伺服器
 FROM nginx:latest
