@@ -15,8 +15,8 @@
   </div>
 </template>
 <script setup>
-import NewCaseTitle from "@/components/pet/rescue/newcase/NewCaseTitle.vue";
-import NewCaseForm from "@/components/pet/rescue/newcase/NewCaseForm.vue";
+import NewCaseTitle from "@/components/pet/rescue/newCase/NewCaseTitle.vue";
+import NewCaseForm from "@/components/pet/rescue/newCase/NewCaseForm.vue";
 </script>
 
 <style scoped>
