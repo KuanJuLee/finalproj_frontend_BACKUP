@@ -5,7 +5,7 @@
     <!-- 判斷是否已綁定 LineID -->
     <div v-if="!isBound">
       <p>您尚未綁定 LINE，請先進行 LINE 登入：</p>
-      <LineLogin @bindingSuccess="handleBindingSuccess" />
+      <LineLogin @bindingSuccess="handleBindingSuccess"></LineLogin>
     </div>
     <div v-else>
       <p>您的 LINE 帳戶已綁定，請點擊下方按鈕追蹤商家：</p>
@@ -26,7 +26,7 @@
 <script setup>
 import axios from "axios";
 import Swal from "sweetalert2";
-import LineLogin from "../login/LineLogin.vue";
+import LineLogin from "@/components/member/login/LineLogin.vue";
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 
@@ -35,7 +35,6 @@ const isBound = ref(false); // 控制顯示line登入或line加好友
 const followStatus = ref(null); // 追蹤狀態，null 表示尚未檢查
 const userToken = ref(""); // 用戶的 Token
 const memberId = ref("");
-
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -46,8 +45,8 @@ onMounted(async () => {
   //這邊要先確認有無持有memberId，表示註冊過，已將此驗證邏輯放在route.js中做全局攔截
   initializeUser();
   if (memberId.value) {
-    await checkBindingStatus();  //從member資料表，對應此memberId有無綁定的lineid，用於決定顯示line登入按鈕或是line加好友按鈕
-    await checkFollowStatus();  //檢查商家line追蹤狀態，從member資料表，對應此memberId的followed欄位是否為true，是則顯示連動成功
+    await checkBindingStatus(); //從member資料表，對應此memberId有無綁定的lineid，用於決定顯示line登入按鈕或是line加好友按鈕
+    await checkFollowStatus(); //檢查商家line追蹤狀態，從member資料表，對應此memberId的followed欄位是否為true，是則顯示連動成功
   }
 });
 
@@ -80,12 +79,9 @@ function initializeUser() {
 // 方法:用於判斷此用戶的memberId有無綁定一個lineId，有才能直接顯示linebot按鈕，沒有則顯示line登入按鈕
 async function checkBindingStatus() {
   try {
-    const response = await axios.get(
-      `${baseUrl}/line/checkBinding`,
-      {
-        headers: { Authorization: `Bearer ${userToken.value}` },
-      }
-    );
+    const response = await axios.get(`${baseUrl}/line/checkBinding`, {
+      headers: { Authorization: `Bearer ${userToken.value}` },
+    });
     isBound.value = response.data.success;
   } catch (error) {
     console.error("檢查綁定狀態失敗: ", error);
@@ -113,7 +109,4 @@ function handleBindingSuccess() {
   checkFollowStatus();
 }
 </script>
-<style scoped>
-
-
-</style>
+<style scoped></style>
