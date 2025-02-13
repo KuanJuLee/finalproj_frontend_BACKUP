@@ -7,7 +7,6 @@ import Home from "@/views/Home.vue";
 import NotFound from '@/views/NotFound.vue';
 import Forbidden from '@/views/Forbidden.vue';
 import Login from '@/views/secure/Login.vue';   //舊的，先不用了
-import Product from '@/views/pages/Products.vue';
 import RescueCase from '@/views/pages/pet/rescue/RescueCase.vue';
 import EditRescueCase from '../views/pages/pet/rescue/EditRescueCase.vue';
 import NewRescueProgress from '../views/pages/pet/rescue/NewRescueProgress.vue';
