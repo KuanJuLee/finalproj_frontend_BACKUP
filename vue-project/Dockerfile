@@ -4,10 +4,12 @@ WORKDIR /app                   # Docker 會在該暫時性 Build 容器內創建
 COPY package.json package-lock.json ./      
 RUN npm install
 COPY . .             # 將Jenkins 內的 ./frontend/vue-project 目錄複製到 /app
-RUN npm run build
+RUN npm run build               # 執行 npm install 和 npm run build，產生 /app/dist/
 
 # 2. 使用 Nginx 作為前端伺服器
 FROM nginx:latest
-COPY --from=build /app/dist /usr/share/nginx/html
+COPY --from=build /app/dist /usr/share/nginx/html    # build表第一建構階段產出，最終 /app/dist/ 會被複製到 Nginx 容器的 /usr/share/nginx/html
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
+
+# docker build 完成後，暫時性建構容器 自動銷毀，只有 leekuanju/frontend:latest 映像檔會被保存
