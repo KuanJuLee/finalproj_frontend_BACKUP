@@ -7,6 +7,7 @@ COPY . .
 RUN npm run build              
 CMD ["sh"]
 
+# 事先 COPY package*.json ./ 讓 npm install 只在 package.json 變更時才重新執行，不會每次都重新下載函式庫
  # Docker 會在該暫時性 Build 容器內創建 /app 目錄，往後指令都在此目錄執行
  # copy.. 將Jenkins 內的 ./frontend/vue-project 目錄複製到 /app
 # RUN npm run build  執行 npm install 和 npm run build，產生 /app/dist/
