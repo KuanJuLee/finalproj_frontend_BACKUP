@@ -1,5 +1,5 @@
 <template lang="">
-    <div class="post">
+  <div class="post">
     <div class="post-image">
       <img
         :src="caseData.casePictures?.[0].pictureUrl"
@@ -9,33 +9,48 @@
     <div class="post-details">
       <div class="info">
         <div class="post-id">救援案件編號 : {{ caseData.rescueCaseId }}</div>
-        <div class="case-status" :class="statusClass(caseData.caseState)" >
+        <div class="case-status" :class="statusClass(caseData.caseState)">
           {{ caseData.caseState }}
         </div>
       </div>
       <div class="info-3">
         建立日期: {{ formatDate(caseData.publicationTime) }}
       </div>
-        <h2 class="case-title">
-          [{{ caseData.cityName }}{{ caseData.districtAreaName }}]
-          {{ caseData.caseTitle }}
-        </h2>
+      <h2 class="case-title">
+        [{{ caseData.cityName }}{{ caseData.districtAreaName }}]
+        {{ caseData.caseTitle }}
+      </h2>
       <div class="post-details-p">
         <p>動物類別：{{ caseData.species }}</p>
         <p>動物品種：{{ caseData.breed }}</p>
-        <p>地點: {{ caseData.cityName }}{{ caseData.districtAreaName }}{{caseData.street}} </p>
-        <p>救援需求：{{  caseData.rescueDemands?.join("、") || "無資料"}}</p>
-        <p>通報人可負擔事項：{{ caseData.canAffords?.join("、") || "無資料"}}</p>
+        <p>
+          地點: {{ caseData.cityName }}{{ caseData.districtAreaName
+          }}{{ caseData.street }}
+        </p>
+        <p>救援需求：{{ caseData.rescueDemands?.join("、") || "無資料" }}</p>
+        <p>
+          通報人可負擔事項：{{ caseData.canAffords?.join("、") || "無資料" }}
+        </p>
       </div>
       <div class="case-footer">
         <p>
-            <font-awesome-icon icon="fa-solid fa-circle-user"  class="user-icon" />發文者：<span class="author">{{ caseData.memberNickName }}</span>
+          <font-awesome-icon
+            icon="fa-solid fa-circle-user"
+            class="user-icon"
+          />發文者：<span class="author">{{ caseData.memberNickName }}</span>
         </p>
         <div class="views-and-follows">
           <div class="viewCount">
-            <font-awesome-icon icon="fa-solid fa-eye" class="view-icon"/><span>{{ caseData.viewCount || 0 }}</span> 
+            <font-awesome-icon
+              icon="fa-solid fa-eye"
+              class="view-icon"
+            /><span>{{ caseData.viewCount || 0 }}</span>
           </div>
-            <followButton :follow="caseData.follow" :caseId="caseData.rescueCaseId" caseType="rescue"/>
+          <followButton
+            :follow="caseData.follow"
+            :caseId="caseData.rescueCaseId"
+            caseType="rescue"
+          />
         </div>
       </div>
     </div>
@@ -46,16 +61,15 @@
 import { defineProps, ref, computed } from "vue";
 import followButton from "@/components/pet/rescue/follow/followButton.vue";
 
-
+console.log(caseData.casePictures?.[0].pictureUrl);
 
 //從RescueCase父組件傳遞的caseData
 defineProps({
-    caseData: {
+  caseData: {
     type: Object,
     required: true,
   },
 });
-
 
 // 格式化日期函數
 const formatDate = (date) => {
@@ -75,26 +89,23 @@ const statusClass = (caseState) => {
       return "status-default";
   }
 };
-
-
 </script>
 
 <style scoped>
-
-.user-icon{
-    margin-right: 6px;
-    color:#dbdddc;
-    font-size: 24px;
+.user-icon {
+  margin-right: 6px;
+  color: #dbdddc;
+  font-size: 24px;
 }
 
-.view-icon{
-    margin-right:5px;
-    color:#dbdddc;
-    font-size: 20px;
+.view-icon {
+  margin-right: 5px;
+  color: #dbdddc;
+  font-size: 20px;
 }
 
-.viewCount{
-  margin-right: 10px ;
+.viewCount {
+  margin-right: 10px;
 }
 
 a {
@@ -143,7 +154,7 @@ a {
   font-size: 15px;
 }
 
-.case-footer p{
+.case-footer p {
   width: 100%;
 }
 
