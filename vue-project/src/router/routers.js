@@ -44,7 +44,6 @@ const routes = [
   { path: "/403", component: Forbidden, name: "forbidden-link" },
   { path: '/secure/login', component: LoginMember, name: 'login-link' },
   { path: '/secure/loginadmin', component: LoginAdmin, name: 'login-admin-link' },
-  { path: "/pages/products", component: Product, name: "pages-products-link" },
   { path: "/pet/rescue/search", component: RescueSearch, name: "pet-rescueSearch-link"}, 
   { path: "/pet/rescueCase/:id", component: RescueCase, name: "pet-rescueCase-link",  props: true},  // 使用 props 傳遞參數產生動態路由(新增案件)
   { path: "/pet/rescueCase/edit/:id", component: EditRescueCase, name: "pet-rescueCase-edit-link",  props: true},  // 使用 props 傳遞參數產生動態路由(編輯案件)
