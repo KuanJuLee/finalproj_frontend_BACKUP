@@ -176,6 +176,8 @@ import { useRouter } from "vue-router";
 import { ref, onMounted, watch, reactive } from "vue";
 import axios from "axios";
 
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
 const router = useRouter();
 
 //從後端提取表單選項資料
@@ -221,16 +223,12 @@ const submitForm = async () => {
   const token = parsedUser ? parsedUser.token : null;
 
   try {
-    const response = await axios.post(
-      "http://localhost:8080/RescueCase/add",
-      form,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await axios.post(`${baseUrl}/RescueCase/add`, form, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
     console.log("表單提交成功:", response.data);
     router.push("/pet/rescue/search"); // 成功後跳轉到 search 頁面
   } catch (error) {
@@ -242,7 +240,7 @@ const submitForm = async () => {
 //提取物種資料
 const fetchSpecies = async () => {
   try {
-    const response = await axios.get("http://localhost:8080/pet/allSpecies");
+    const response = await axios.get(`${baseUrl}/pet/allSpecies`);
     speciesList.value = response.data;
   } catch (error) {
     console.error("無法獲取物種資料:", error);
@@ -252,7 +250,7 @@ const fetchSpecies = async () => {
 //提取毛色資料
 const fetchFurColors = async () => {
   try {
-    const response = await axios.get("http://localhost:8080/pet/allFurColor");
+    const response = await axios.get(`${baseUrl}/pet/allFurColor`);
     furColors.value = response.data;
   } catch (error) {
     console.error("無法獲取毛色資料:", error);
@@ -262,7 +260,7 @@ const fetchFurColors = async () => {
 //提取縣市資料
 const fetchCities = async () => {
   try {
-    const response = await axios.get("http://localhost:8080/pet/allCity");
+    const response = await axios.get(`${baseUrl}/pet/allCity`);
     cities.value = response.data;
   } catch (error) {
     console.error("無法獲取縣市資料:", error);
@@ -278,7 +276,7 @@ const fetchDistricts = async (selectedCityId) => {
   }
   try {
     const response = await axios.get(
-      `http://localhost:8080/pet/districtAreasByCity/${selectedCityId}`
+      `${baseUrl}/pet/districtAreasByCity/${selectedCityId}`
     );
     districts.value = response.data;
   } catch (error) {
@@ -297,7 +295,7 @@ watch(
 //提取品種資料
 const fetchBreeds = async () => {
   try {
-    const response = await axios.get("http://localhost:8080/pet/allBreed");
+    const response = await axios.get(`${baseUrl}/pet/allBreed`);
     breeds.value = response.data;
   } catch (error) {
     console.error("無法獲取品種資料:", error);
@@ -307,9 +305,7 @@ const fetchBreeds = async () => {
 //提取救援需求資料
 const fetchRescueDemands = async () => {
   try {
-    const response = await axios.get(
-      "http://localhost:8080/pet/allRescueDemands"
-    );
+    const response = await axios.get(`${baseUrl}/pet/allRescueDemands`);
     rescueDemands.value = response.data;
   } catch (error) {
     console.error("無法獲取救援需求資料:", error);
@@ -319,7 +315,7 @@ const fetchRescueDemands = async () => {
 //提取可負擔資料
 const fetchCanAffords = async () => {
   try {
-    const response = await axios.get("http://localhost:8080/pet/allCanAffords");
+    const response = await axios.get(`${baseUrl}/pet/allCanAffords`);
     canAffords.value = response.data;
   } catch (error) {}
 };

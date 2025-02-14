@@ -63,6 +63,7 @@ import { ref, nextTick } from "vue";
 import axios from "axios";
 import Cropper from "cropperjs";
 import "cropperjs/dist/cropper.css";
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const previewImage = ref(null); //  圖片預覽
 const croppedImage = ref(null); // 裁剪後的圖片
@@ -146,7 +147,7 @@ const confirmUpload = async () => {
         console.log("前端發送的 Token:", token);
 
         const response = await axios.post(
-          "http://localhost:8080/Case/uploadImage",
+          `${baseUrl}/Case/uploadImag`,
           formData,
           {
             headers: {

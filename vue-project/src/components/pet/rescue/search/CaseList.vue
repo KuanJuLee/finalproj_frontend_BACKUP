@@ -51,7 +51,7 @@ const fetchCases = async () => {
 
   isLoading.value = true; // 開始加載
   try {
-    const response = await axios.get("http://localhost:8080/RescueCase/search/allCases", {
+    const response = await axios.get(`${baseUrl}/RescueCase/search/allCases`, {
       params: { offset: offset.value, limit, sortOrder: "desc" },
     });
 
@@ -88,9 +88,9 @@ watch(
     isLoading.value = true;
 
     // 轉換 Vue Proxy 物件為普通 JS 物件(Vue 的 ref() 和 reactive() 內部使用 Proxy 來管理響應式數據，包含一些 Vue 內部的 metadata，不是普通的 JS 物件)
-     //先用JSON.stringify()去除Vue Proxy的metadata，並返回乾淨的 JSON 字串
+    //先用JSON.stringify()去除Vue Proxy的metadata，並返回乾淨的 JSON 字串
     //JSON.parse()將JSON字串轉換為JS物件
-    const cleanedParams = JSON.parse(JSON.stringify(newParams));  
+    const cleanedParams = JSON.parse(JSON.stringify(newParams));
 
     console.log("🔹 原始 Proxy 物件:", newParams);
     console.log("✅ 轉換後的普通物件:", cleanedParams);
@@ -108,7 +108,7 @@ watch(
         }
       );
 
-      console.log("條件篩選後由後端返回數據：", response.data.cases); // 調試數據結構 
+      console.log("條件篩選後由後端返回數據：", response.data.cases); // 調試數據結構
       // 重新填充新數據
       rescueCaseList.value = response.data.cases;
       offset.value += response.data.cases.length; // 更新 offset

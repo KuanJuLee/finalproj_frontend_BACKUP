@@ -262,7 +262,7 @@ watch(
 //提取品種資料
 const fetchBreeds = async () => {
   try {
-    const response = await axios.get("http://localhost:8080/pet/allBreed");
+    const response = await axios.get(`${baseUrl}/pet/allBreed`);
     breeds.value = response.data;
   } catch (error) {
     console.error("無法獲取品種資料:", error);

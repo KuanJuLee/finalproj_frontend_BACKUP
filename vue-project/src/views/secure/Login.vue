@@ -61,10 +61,7 @@ async function login() {
   console.log(body);
 
   try {
-    const response = await axiosapi.post(
-      "http://localhost:8080/ajax/secure/login",
-      body
-    );
+    const response = await axiosapi.post(`${baseUrl}/ajax/secure/login`, body);
     console.log("response", response);
     if (response.data.success) {
       await Swal.fire({

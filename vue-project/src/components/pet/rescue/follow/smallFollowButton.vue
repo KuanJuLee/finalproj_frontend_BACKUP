@@ -39,7 +39,7 @@ const showAlert = (message, icon) => {
   Swal.fire({
     title: "追蹤狀態",
     text: message,
-    imageUrl: "http://localhost:8080/upload/final/pet/images/follow-icon.png",
+    imageUrl: `${baseUrl}/upload/final/pet/images/follow-icon.png`,
     // icon: icon,
     imageWidth: 150, // 設定寬度
     imageHeight: 120, // 設定高度
@@ -86,7 +86,6 @@ const toggleFollow = async () => {
 
     showAlert("已取消追蹤", "info");
     emit("followUpdated"); // ✅ 取消追蹤後，通知父組件刷新
-    
   } catch (error) {
     console.error("追蹤請求失敗:", error);
     alert("追蹤失敗，請稍後再試！");
