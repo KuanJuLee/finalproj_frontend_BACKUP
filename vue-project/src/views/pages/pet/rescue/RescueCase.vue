@@ -82,7 +82,7 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
 import { useRoute } from "vue-router";
-import axios from "axios";
+import { axiosapi2 } from "@/plugins/axios.js";
 import CaseData from "../../../../components/pet/rescue/case/CaseData.vue";
 import CaseRescueProgress from "../../../../components/pet/rescue/case/CaseRescueProgress.vue";
 import CaseRescueReason from "../../../../components/pet/rescue/case/CaseRescueReason.vue";
@@ -103,8 +103,8 @@ const rescueProgressList = ref([]);
 const fetchRescueProgress = async () => {
   try {
     const caseId = route.params.id;
-    const response = await axios.get(
-      `${baseUrl}/RescueCase/rescueProgress/${caseId}`
+    const response = await axiosapi2.get(
+      `/RescueCase/rescueProgress/${caseId}`
     );
 
     //打進救援進度結果
@@ -156,7 +156,7 @@ onMounted(async () => {
   fetchRescueProgress(); //向後端拿救援案件進度
   const caseId = route.params.id;
   try {
-    const response = await axios.get(`${baseUrl}/RescueCase/search/${caseId}`);
+    const response = await axiosapi2.get(`/RescueCase/search/${caseId}`);
     rescueCase.value = response.data || {}; //確保 rescueCase 不為 null，會導致傳遞給子組件報錯
     rescueCase.value.casePictures = rescueCase.value.casePictures || [];
     console.log("案件資訊為", response.data);

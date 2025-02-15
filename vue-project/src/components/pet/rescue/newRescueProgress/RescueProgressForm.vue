@@ -2,7 +2,6 @@
   <h2 class="form-title">進度更新</h2>
   <div class="form-container">
     <form @submit.prevent="submitForm">
-
       <div class="form-group">
         <label for="reason" class="required">進度更新內容</label>
         <textarea
@@ -13,18 +12,16 @@
         ></textarea>
       </div>
 
-
-      <div class="form-group ">
+      <div class="form-group">
         <label>圖片上傳(可選)</label>
         <div class="upload-image">
           <ImageUpload @image-uploaded="ImageUploaded"></ImageUpload>
         </div>
       </div>
 
-      <div  class="submit-button-container">
+      <div class="submit-button-container">
         <button type="submit" class="submit-button">確定送出</button>
       </div>
-
     </form>
   </div>
 </template>
@@ -32,17 +29,15 @@
 <script setup>
 import ImageUpload from "./ImageUpload.vue";
 import { useRouter, useRoute } from "vue-router";
-import {  reactive } from "vue";
-import axios from "axios";
+import { reactive } from "vue";
+import { axiosapi2 } from "@/plugins/axios.js";
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const router = useRoute(); //專門用來讀取當前路由資訊
-const route = useRouter();  //專門用來跳轉頁面
+const route = useRouter(); //專門用來跳轉頁面
 const caseId = router.params.id; // 從路徑中獲取 ID
 console.log("獲取的案件 ID:", caseId);
-
-
 
 // 用來傳送資料給後端   Vue的 reactive會產生 Proxy 物件，可能導致 axios無法正確發送數據，因此要記得轉換
 const form = reactive({
@@ -51,7 +46,6 @@ const form = reactive({
 });
 
 const submitForm = async () => {
-  
   const cleanForm = JSON.parse(JSON.stringify(form));
   console.log("送出數據為 (轉換後)", cleanForm);
 
@@ -60,8 +54,8 @@ const submitForm = async () => {
   const token = parsedUser ? parsedUser.token : null;
 
   try {
-    const response = await axios.post(
-      `${baseUrl}/RescueCase/rescueProgress/add/${caseId}`,
+    const response = await axiosapi2.post(
+      `/RescueCase/rescueProgress/add/${caseId}`,
       cleanForm,
       {
         headers: {
@@ -78,7 +72,6 @@ const submitForm = async () => {
   }
 };
 
-
 // 監聽圖片上傳事件
 const ImageUploaded = (backTmpUrl) => {
   console.log("父組件拿到囉!", backTmpUrl);
@@ -87,12 +80,10 @@ const ImageUploaded = (backTmpUrl) => {
 };
 </script>
 
-
 <style scoped>
-
 .form-container {
   display: flex;
-  justify-content:center;
+  justify-content: center;
   margin: 0 40px;
   padding: 50px 60px;
   background: #e5e2e5;
@@ -124,10 +115,9 @@ label.required::before {
 
 .form-group textarea {
   max-width: 100%;
-  height:200px;
+  height: 200px;
   width: 600px; /* 為特定 `textarea` 設置固定寬度 */
 }
-
 
 label {
   display: block;
@@ -192,9 +182,7 @@ textarea {
   background-color: #f2d17d;
 }
 
-
-.submit-button-container{
+.submit-button-container {
   text-align: right;
 }
-
 </style>

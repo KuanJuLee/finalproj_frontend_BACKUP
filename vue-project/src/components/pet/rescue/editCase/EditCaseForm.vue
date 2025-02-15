@@ -4,14 +4,14 @@
     <form @submit.prevent="submitForm">
       <div class="form-group">
         <label class="required">救援狀態</label>
-          <select  class="form-caseState" v-model="form.caseStateId" required>
-            <option value="3">待救援</option>
-            <option value="4">已救援</option>
-            <option value="7">變成小天使</option>
-            <option value="8">案件失敗</option>
-          </select>
+        <select class="form-caseState" v-model="form.caseStateId" required>
+          <option value="3">待救援</option>
+          <option value="4">已救援</option>
+          <option value="7">變成小天使</option>
+          <option value="8">案件失敗</option>
+        </select>
       </div>
-      
+
       <div class="form-group">
         <label for="caseTitle" class="required">救援標題</label>
         <input
@@ -187,17 +187,15 @@
 import ImageUpload from "./ImageUpload.vue";
 import { useRouter } from "vue-router";
 import { ref, onMounted, watch, reactive } from "vue";
-import axios from "axios";
+import { axiosapi2 } from "@/plugins/axios.js";
 import { useRoute } from "vue-router";
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const router = useRoute(); //專門用來讀取當前路由資訊
-const route = useRouter();  //專門用來跳轉頁面
+const route = useRouter(); //專門用來跳轉頁面
 const caseId = router.params.id; // 從路徑中獲取 ID
 console.log("獲取的案件 ID:", caseId);
-
-
 
 //從後端提取表單選項資料
 const furColors = ref([]);
@@ -210,7 +208,7 @@ const canAffords = ref([]);
 
 // 用來傳送資料給後端
 const form = reactive({
-  caseStateId:"",
+  caseStateId: "",
   caseTitle: "",
   speciesId: "",
   breedId: "",
@@ -245,33 +243,31 @@ const submitForm = async () => {
   const parsedUser = JSON.parse(user);
   const token = parsedUser ? parsedUser.token : null;
 
-
-    // **建立符合後端 `ModifyRescueCaseDto` 的物件**
-    const requestData = {
-      caseTitle: form.caseTitle,
-      speciesId: form.speciesId,
-      breedId: form.breedId,
-      furColorId: form.furColorId,
-      gender: form.gender,
-      sterilization: form.sterilization,
-      age: form.age,
-      microChipNumber: form.microChipNumber,
-      suspLost: form.suspLost,
-      cityId: form.cityId,
-      districtAreaId: form.districtAreaId,
-      street: form.street,
-      rescueReason: form.rescueReason,
-      caseStateId: form.caseStateId,
-      tag: form.tag,
-      rescueDemands: form.rescueDemands,
-      canAffords: form.canAffords,
-      casePictures: form.casePictures,  // ✅ 確保 `imageIdandUrl` 轉換完成
-    };
-
+  // **建立符合後端 `ModifyRescueCaseDto` 的物件**
+  const requestData = {
+    caseTitle: form.caseTitle,
+    speciesId: form.speciesId,
+    breedId: form.breedId,
+    furColorId: form.furColorId,
+    gender: form.gender,
+    sterilization: form.sterilization,
+    age: form.age,
+    microChipNumber: form.microChipNumber,
+    suspLost: form.suspLost,
+    cityId: form.cityId,
+    districtAreaId: form.districtAreaId,
+    street: form.street,
+    rescueReason: form.rescueReason,
+    caseStateId: form.caseStateId,
+    tag: form.tag,
+    rescueDemands: form.rescueDemands,
+    canAffords: form.canAffords,
+    casePictures: form.casePictures, // ✅ 確保 `imageIdandUrl` 轉換完成
+  };
 
   try {
-    const response = await axios.put(
-      `${baseUrl}/RescueCase/modify/${caseId}`,
+    const response = await axiosapi2.put(
+      `/RescueCase/modify/${caseId}`,
       requestData,
       {
         headers: {
@@ -291,7 +287,7 @@ const submitForm = async () => {
 //提取物種資料
 const fetchSpecies = async () => {
   try {
-    const response = await axios.get(`${baseUrl}/pet/allSpecies`);
+    const response = await axiosapi2.get(`/pet/allSpecies`);
     speciesList.value = response.data;
   } catch (error) {
     console.error("無法獲取物種資料:", error);
@@ -301,7 +297,7 @@ const fetchSpecies = async () => {
 //提取毛色資料
 const fetchFurColors = async () => {
   try {
-    const response = await axios.get(`${baseUrl}/pet/allFurColor`);
+    const response = await axiosapi2.get(`/pet/allFurColor`);
     furColors.value = response.data;
   } catch (error) {
     console.error("無法獲取毛色資料:", error);
@@ -311,7 +307,7 @@ const fetchFurColors = async () => {
 //提取縣市資料
 const fetchCities = async () => {
   try {
-    const response = await axios.get(`${baseUrl}/pet/allCity`);
+    const response = await axiosapi2.get(`/pet/allCity`);
     cities.value = response.data;
   } catch (error) {
     console.error("無法獲取縣市資料:", error);
@@ -326,8 +322,8 @@ const fetchDistricts = async (selectedCityId) => {
     return;
   }
   try {
-    const response = await axios.get(
-      `${baseUrl}/pet/districtAreasByCity/${selectedCityId}`
+    const response = await axiosapi2.get(
+      `/pet/districtAreasByCity/${selectedCityId}`
     );
     districts.value = response.data;
   } catch (error) {
@@ -346,7 +342,7 @@ watch(
 //提取品種資料
 const fetchBreeds = async () => {
   try {
-    const response = await axios.get(`${baseUrl}/pet/allBreed`);
+    const response = await axiosapi2.get(`/pet/allBreed`);
     breeds.value = response.data;
   } catch (error) {
     console.error("無法獲取品種資料:", error);
@@ -356,9 +352,7 @@ const fetchBreeds = async () => {
 //提取救援需求資料
 const fetchRescueDemands = async () => {
   try {
-    const response = await axios.get(
-      `${baseUrl}/pet/allRescueDemands`
-    );
+    const response = await axiosapi2.get(`/pet/allRescueDemands`);
     rescueDemands.value = response.data;
   } catch (error) {
     console.error("無法獲取救援需求資料:", error);
@@ -368,7 +362,7 @@ const fetchRescueDemands = async () => {
 //提取可負擔資料
 const fetchCanAffords = async () => {
   try {
-    const response = await axios.get(`${baseUrl}/pet/allCanAffords`);
+    const response = await axiosapi2.get(`/pet/allCanAffords`);
     canAffords.value = response.data;
   } catch (error) {}
 };
@@ -382,27 +376,26 @@ const ImageUploaded = (backTmpUrl) => {
 
 // 藉由網頁路徑中拿取的caseId向後端請求案件數據
 const fetchCaseData = async () => {
-  
   //解析出token
   const user = localStorage.getItem("user");
   const parsedUser = JSON.parse(user);
   const token = parsedUser ? parsedUser.token : null;
-  
-  console.log("token為",token);
-  
+
+  console.log("token為", token);
+
   try {
-    const response = await axios.get(`${baseUrl}/RescueCase/editSearch/${caseId}`,{
+    const response = await axiosapi2.get(`/RescueCase/editSearch/${caseId}`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
     });
-    
+
     if (response.data) {
       console.log("熱騰騰獲取到的案件數據:", response.data);
 
-    // 解析後端返回的 casePictures
-    let pictures = response.data.casePictures.map((pic, index) => ({
+      // 解析後端返回的 casePictures
+      let pictures = response.data.casePictures.map((pic, index) => ({
         casePictureId: parseInt(pic.casePictureId, 10) || null, // 確保 ID 是數字
         pictureUrl: pic.pictureUrl || "",
       }));
@@ -434,7 +427,6 @@ const fetchCaseData = async () => {
     console.error("獲取案件數據失敗:", error);
   }
 };
-
 
 //使用者上傳新圖片時，會替換 casePictures 陣列中的對應圖片
 const handleImageUploaded = (index, newImageUrl) => {
@@ -469,11 +461,9 @@ label.required::before {
   font-weight: bold;
 }
 
-
-.form-caseState{
+.form-caseState {
   width: 150px;
   margin-bottom: 10px;
-
 }
 
 .form-title {

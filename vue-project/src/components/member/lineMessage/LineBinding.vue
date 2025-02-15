@@ -24,7 +24,7 @@
 </template>
 
 <script setup>
-import axios from "axios";
+import { axiosapi2 } from "@/plugins/axios.js";
 import Swal from "sweetalert2";
 import LineLogin from "@/components/member/login/LineLogin.vue";
 import { ref, onMounted } from "vue";
@@ -79,7 +79,7 @@ function initializeUser() {
 // 方法:用於判斷此用戶的memberId有無綁定一個lineId，有才能直接顯示linebot按鈕，沒有則顯示line登入按鈕
 async function checkBindingStatus() {
   try {
-    const response = await axios.get(`${baseUrl}/line/checkBinding`, {
+    const response = await axiosapi2.get(`/line/checkBinding`, {
       headers: { Authorization: `Bearer ${userToken.value}` },
     });
     isBound.value = response.data.success;
@@ -92,7 +92,7 @@ async function checkBindingStatus() {
 //  方法:檢查商家line追蹤狀態
 async function checkFollowStatus() {
   try {
-    const response = await axios.get(`${baseUrl}/line/checkFollow`, {
+    const response = await axiosapi2.get(`/line/checkFollow`, {
       headers: { Authorization: `Bearer ${userToken.value}` },
       params: { memberId: memberId.value },
     });

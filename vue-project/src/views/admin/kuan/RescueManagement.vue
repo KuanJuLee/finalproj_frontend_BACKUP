@@ -17,7 +17,7 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import axios from "axios";
+import { axiosapi2 } from "@/plugins/axios.js";
 import SearchForm from "@/components/admin/rescueManagement/SearchForm.vue";
 import CaseList from "@/components/admin/rescueManagement/CaseList.vue";
 // import GoogleMap from "@/views/pages/pet/map/GoogleMap.vue";
@@ -28,7 +28,7 @@ const caseLocations = ref([]); // 儲存案件座標資訊
 // 初始化獲取所有案件
 const fetchAllCases = async () => {
   try {
-    const response = await axios.get("/RescueCase/search/allCases", {
+    const response = await axiosapi2.get("/RescueCase/search/allCases", {
       params: { offset: 0, limit: 20, sortOrder: "desc" },
     });
     cases.value = response.data.cases;
@@ -40,7 +40,7 @@ const fetchAllCases = async () => {
 // 取得篩選後的案件
 const fetchFilteredCases = async (filters) => {
   try {
-    const response = await axios.post("/RescueCase/search", filters);
+    const response = await axiosapi2.post("/RescueCase/search", filters);
     cases.value = response.data;
     fetchCaseLocations(filters);
   } catch (error) {
@@ -51,7 +51,7 @@ const fetchFilteredCases = async (filters) => {
 // 取得篩選後的案件座標
 const fetchCaseLocations = async (filters) => {
   try {
-    const response = await axios.get("/RescueCase/getLocations/filters", {
+    const response = await axiosapi2.get("/RescueCase/getLocations/filters", {
       params: filters,
     });
     caseLocations.value = response.data;
@@ -63,7 +63,7 @@ const fetchCaseLocations = async (filters) => {
 // 刪除案件
 const deleteCase = async (caseId) => {
   try {
-    await axios.delete(`/RescueCase/delete/${caseId}`);
+    await axiosapi2.delete(`/RescueCase/delete/${caseId}`);
     cases.value = cases.value.filter((c) => c.rescueCaseId !== caseId);
   } catch (error) {
     console.error("刪除案件失敗:", error);

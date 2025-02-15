@@ -20,7 +20,7 @@
 
 <script setup>
 import { ref, onMounted, watch } from "vue";
-import axios from "axios";
+import { axiosapi2 } from "@/plugins/axios.js";
 import CaseItem from "./CaseItem.vue";
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
@@ -51,7 +51,7 @@ const fetchCases = async () => {
 
   isLoading.value = true; // 開始加載
   try {
-    const response = await axios.get(`${baseUrl}/RescueCase/search/allCases`, {
+    const response = await axiosapi2.get(`/RescueCase/search/allCases`, {
       params: { offset: offset.value, limit, sortOrder: "desc" },
     });
 
@@ -96,8 +96,8 @@ watch(
     console.log("✅ 轉換後的普通物件:", cleanedParams);
 
     try {
-      const response = await axios.post(
-        `${baseUrl}/RescueCase/search/infinite`,
+      const response = await axiosapi2.post(
+        `/RescueCase/search/infinite`,
         cleanedParams.searchParams,
         {
           params: {

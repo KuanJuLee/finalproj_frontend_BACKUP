@@ -26,7 +26,7 @@
   <div><LineLogin /></div>
 </template>
 <script setup>
-import axiosapi from "@/plugins/axios.js";
+import { axiosapi } from "@/plugins/axios.js";
 import Swal from "sweetalert2";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
@@ -69,7 +69,7 @@ async function login() {
         icon: "success",
       });
       axiosapi.defaults.headers.authorization = "Bearer " + response.data.token;
-      //設定 Axios 的 Authorization 預設標頭，這樣後續所有 使用 axiosapi 發送的請求 都會自動攜帶這個 Token。每次用axiosapi發送 API 請求時，這個 Token 會自動附加到 HTTP Header 中，不需要手動添加
+      //設定 Axios 的 Authorization 預設標頭，這樣後續所有 使用 axiosapi 發送的請求 都會自動攜帶這個 Token。每次用{axiosapi2}發送 API 請求時，這個 Token 會自動附加到 HTTP Header 中，不需要手動添加
       userStore.setEmail(response.data.user);
       userStore.setToken(response.data.token); //記得增添這一條!!!!!!!!!!!!!!!
 

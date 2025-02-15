@@ -10,23 +10,23 @@
         />
       </div>
       <div class="filters">
-            <input
-              type="text"
-              v-model="selectedBreed"
-              list="breedOptions"
-              placeholder="請輸入或選擇品種"
-              class="input-field"
-            />
-            <datalist id="breedOptions">
-              <option
-                v-for="breed in breeds"
-                :key="breed.breedId"
-                :value="breed.breed"
-              >
-                {{ breed.breed }}
-              </option>
-            </datalist>
-          </div>
+        <input
+          type="text"
+          v-model="selectedBreed"
+          list="breedOptions"
+          placeholder="請輸入或選擇品種"
+          class="input-field"
+        />
+        <datalist id="breedOptions">
+          <option
+            v-for="breed in breeds"
+            :key="breed.breedId"
+            :value="breed.breed"
+          >
+            {{ breed.breed }}
+          </option>
+        </datalist>
+      </div>
       <div class="filters">
         <select v-model="furColorId" class="dropdown">
           <option value="">選擇毛色</option>
@@ -89,7 +89,7 @@
           貓
         </label>
         <label>
-          <input type="checkbox" :value=true @change="updateSuspLost" />
+          <input type="checkbox" :value="true" @change="updateSuspLost" />
           走失標記 <span class="optional">(如果浪浪疑似走失，請勾選)</span>
         </label>
       </div>
@@ -109,8 +109,7 @@
 
 <script setup>
 import { ref, reactive, onMounted, computed, watch } from "vue";
-import axios from "axios";
-
+import { axiosapi2 } from "@/plugins/axios.js";
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -134,7 +133,6 @@ const districts = ref([]);
 const breeds = ref([]);
 const caseStates = ref([]);
 
-
 onMounted(() => {
   fetchFurColors();
   fetchCaseStates();
@@ -145,7 +143,7 @@ onMounted(() => {
 //提取毛色資料
 const fetchFurColors = async () => {
   try {
-    const response = await axios.get(`${baseUrl}/pet/allFurColor`);
+    const response = await axiosapi2.get(`/pet/allFurColor`);
     furColors.value = response.data;
     console.log("毛色資料1:", furColors.value);
     console.log("毛色資料2:", furColors.value[0].furColor);
@@ -157,7 +155,7 @@ const fetchFurColors = async () => {
 //提取縣市資料
 const fetchCities = async () => {
   try {
-    const response = await axios.get(`${baseUrl}/pet/allCity`);
+    const response = await axiosapi2.get(`/pet/allCity`);
     cities.value = response.data;
   } catch (error) {
     console.error("無法獲取縣市資料:", error);
@@ -172,8 +170,8 @@ const fetchDistricts = async (selectedCityId) => {
     return;
   }
   try {
-    const response = await axios.get(
-      `${baseUrl}/pet/districtAreasByCity/${selectedCityId}`
+    const response = await axiosapi2.get(
+      `/pet/districtAreasByCity/${selectedCityId}`
     );
     districts.value = response.data;
   } catch (error) {
@@ -189,7 +187,7 @@ watch(cityId, (newCityId) => {
 //提取品種資料
 const fetchBreeds = async () => {
   try {
-    const response = await axios.get(`${baseUrl}/pet/allBreed`);
+    const response = await axiosapi2.get(`/pet/allBreed`);
     breeds.value = response.data;
   } catch (error) {
     console.error("無法獲取品種資料:", error);
@@ -199,7 +197,7 @@ const fetchBreeds = async () => {
 //提取救援狀態資料並篩選救援所需
 const fetchCaseStates = async () => {
   try {
-    const response = await axios.get(`${baseUrl}/pet/allCaseState`);
+    const response = await axiosapi2.get(`/pet/allCaseState`);
     caseStates.value = response.data;
   } catch (error) {
     console.error("無法獲取救援狀態資料:", error);
@@ -242,8 +240,8 @@ const onSearch = () => {
     cityId: cityId.value,
     districtAreaId: districtId.value,
     speciesId: selectedSpecies.value,
-    suspLost:suspLost.value,
-    breedId:selectedBreed.value
+    suspLost: suspLost.value,
+    breedId: selectedBreed.value,
   };
   console.log("搜尋參數：", searchParams);
   // 傳遞給父組件
@@ -268,22 +266,19 @@ const resetForm = () => {
     cityId: cityId.value,
     districtAreaId: districtId.value,
     speciesId: selectedSpecies.value,
-    suspLost:suspLost.value,
-    breedId:selectedBreed.value
+    suspLost: suspLost.value,
+    breedId: selectedBreed.value,
   };
   console.log("搜尋參數：", searchParams);
   // 傳遞給父組件
   emit("search", searchParams);
-
 };
-
-
 </script>
 
 <style scoped>
 .search-form {
   /* background-color: #f9f9f9; */
-  padding: 0 20px 0 20px; 
+  padding: 0 20px 0 20px;
   border-radius: 8px;
   margin-bottom: 0;
 }
@@ -391,7 +386,7 @@ const resetForm = () => {
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.2s ease; 
+  transition: background-color 0.2s ease;
 }
 
 .btn-search:hover {

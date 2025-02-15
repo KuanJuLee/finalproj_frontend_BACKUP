@@ -6,7 +6,7 @@
 
 <script setup>
 import { ref, onMounted, watch } from "vue";
-import axios from "axios";
+import { axiosapi2 } from "@/plugins/axios.js";
 import { useRoute } from "vue-router";
 import Swal from "sweetalert2";
 
@@ -68,8 +68,8 @@ const toggleFollow = async () => {
   }
 
   try {
-    const response = await axios.put(
-      `${baseUrl}/Case/follow/add`,
+    const response = await axiosapi2.put(
+      `/Case/follow/add`,
       {},
       {
         headers: {

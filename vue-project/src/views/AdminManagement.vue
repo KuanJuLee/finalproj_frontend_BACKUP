@@ -11,7 +11,8 @@
 </template>
 
 <script setup>
-import xxx from "@/plugins/axios.js";
+// import xxx from "@/plugins/axios.js";
+import { axiosapi2 } from "@/plugins/axios.js";
 import Swal from "sweetalert2";
 import sidebar from "@/components/admin/sidebar.vue";
 

@@ -43,7 +43,7 @@
 
 <script setup>
 import { ref, onMounted, nextTick } from "vue";
-import axios from "axios";
+import { axiosapi2 } from "@/plugins/axios.js";
 import Chart from "chart.js/auto";
 import ChartDataLabels from "chartjs-plugin-datalabels"; // 引入 datalabels 插件標示數據
 
@@ -65,7 +65,7 @@ const followChartData = ref("top"); // 🔹 控制案件追蹤人次的篩選
 // **取得統計數據**
 const fetchStats = async () => {
   try {
-    const response = await axios.get(`${baseUrl}/RescueCase/analysis`);
+    const response = await axiosapi2.get(`/RescueCase/analysis`);
     statsData.value = response.data;
 
     // **等待 DOM 更新後再渲染圖表**

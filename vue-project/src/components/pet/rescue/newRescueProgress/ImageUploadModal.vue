@@ -60,7 +60,7 @@
 
 <script setup>
 import { ref, nextTick } from "vue";
-import axios from "axios";
+import { axiosapi2 } from "@/plugins/axios.js";
 import Cropper from "cropperjs";
 import "cropperjs/dist/cropper.css";
 
@@ -147,16 +147,12 @@ const confirmUpload = async () => {
 
         console.log("前端發送的 Token:", token);
 
-        const response = await axios.post(
-          `${baseUrl}/Case/uploadImage`,
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${token}`, //
-            },
-          }
-        );
+        const response = await axiosapi2.post(`/Case/uploadImage`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`, //
+          },
+        });
         if (response.data) {
           console.log("返回結果", response.data);
           emit("imageUploaded", {

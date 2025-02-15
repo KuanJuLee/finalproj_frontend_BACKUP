@@ -156,8 +156,7 @@
 
 <script setup>
 import { ref, watch, onMounted, computed } from "vue";
-import axios from "axios";
-
+import { axiosapi2 } from "@/plugins/axios.js";
 const mapId = import.meta.env.VITE_API_GOOGLE_MAP_ID; //新marker版本需要對應一張特定地圖id
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 const frontUrl = import.meta.env.VITE_FRONT_URL;
@@ -198,7 +197,7 @@ const selectedFurColors = ref([]); // 多選
 //提取物種資料
 const fetchSpecies = async () => {
   try {
-    const response = await axios.get(`${baseUrl}/pet/allSpecies`);
+    const response = await axiosapi2.get(`/pet/allSpecies`);
     speciesList.value = response.data;
   } catch (error) {
     console.error("無法獲取物種資料:", error);
@@ -208,7 +207,7 @@ const fetchSpecies = async () => {
 //提取毛色資料
 const fetchFurColors = async () => {
   try {
-    const response = await axios.get(`${baseUrl}/pet/allFurColor`);
+    const response = await axiosapi2.get(`/pet/allFurColor`);
     furColors.value = response.data;
   } catch (error) {
     console.error("無法獲取毛色資料:", error);
@@ -218,7 +217,7 @@ const fetchFurColors = async () => {
 //提取縣市資料
 const fetchCities = async () => {
   try {
-    const response = await axios.get(`${baseUrl}/pet/allCity`);
+    const response = await axiosapi2.get(`/pet/allCity`);
     cities.value = response.data;
   } catch (error) {
     console.error("無法獲取縣市資料:", error);
@@ -232,8 +231,8 @@ const fetchDistricts = async (selectedCityId) => {
     return;
   }
   try {
-    const response = await axios.get(
-      `${baseUrl}/pet/districtAreasByCity/${selectedCityId}`
+    const response = await axiosapi2.get(
+      `/pet/districtAreasByCity/${selectedCityId}`
     );
     districts.value = response.data;
   } catch (error) {
@@ -244,7 +243,7 @@ const fetchDistricts = async (selectedCityId) => {
 //提取案件狀態資料
 const fetchCaseStates = async () => {
   try {
-    const response = await axios.get(`${baseUrl}/pet/allCaseState`);
+    const response = await axiosapi2.get(`/pet/allCaseState`);
     caseStates.value = response.data;
   } catch (error) {
     console.error("無法獲取案件狀態資料:", error);
@@ -262,7 +261,7 @@ watch(
 //提取品種資料
 const fetchBreeds = async () => {
   try {
-    const response = await axios.get(`${baseUrl}/pet/allBreed`);
+    const response = await axiosapi2.get(`/pet/allBreed`);
     breeds.value = response.data;
   } catch (error) {
     console.error("無法獲取品種資料:", error);
@@ -313,7 +312,7 @@ const fetchAllCases = async () => {
     const caseTypesList = ["RescueCase", "lostCase", "adoptCase"];
     //三種案件請求後端拿座標
     for (const caseType of caseTypesList) {
-      const response = await axios.get(`${baseUrl}/${caseType}/getLocations`);
+      const response = await axiosapi2.get(`/${caseType}/getLocations`);
       response.data.forEach((caseData) => {
         addMarker(
           caseData.latitude,
@@ -370,9 +369,9 @@ const fetchFilteredCases = async () => {
     console.log("往後端送的條件參數", queryString);
 
     for (const caseType of caseTypes.value) {
-      const url = `${baseUrl}/${caseType}/getLocations/filters?${queryString}`;
+      const url = `/${caseType}/getLocations/filters?${queryString}`;
       console.log("url", url);
-      const response = await axios.get(url);
+      const response = await axiosapi2.get(url);
       console.log("查詢到的案件", response.data);
       response.data.forEach((caseData) => {
         addMarker(
