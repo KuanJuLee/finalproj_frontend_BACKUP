@@ -1,6 +1,6 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
-import axiosapi2 from "@/plugins/axios.js";
+import {axiosapi2} from "@/plugins/axios.js";
 
 const useUserStore = defineStore("user", () => {
     const token = ref("");

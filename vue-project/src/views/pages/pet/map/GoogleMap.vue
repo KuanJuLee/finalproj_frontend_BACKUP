@@ -525,6 +525,7 @@ const addMarker = (
     map,
     title: caseTitle, // 讓 Google Maps 內建 hover 顯示標題
     gmpClickable: true, //開啟滑鼠點擊屬性
+    animation: google.maps.Animation.DROP, // 掉落動畫
   });
   console.log("新marker的案件圖片", casePictures);
 
@@ -549,6 +550,18 @@ const addMarker = (
 
   // 監聽 `mouseleave` (滑鼠離開) 來關閉 `InfoWindow`
   marker.element.addEventListener("mouseleave", () => {
+    infoWindow.close();
+  });
+
+  // 監聽 `mouseenter` (滑鼠懸停) → 彈跳動畫
+  marker.element.addEventListener("mouseenter", () => {
+    marker.setAnimation(google.maps.Animation.BOUNCE);
+    infoWindow.open(map, marker);
+  });
+
+  // 監聽 `mouseleave` (滑鼠離開) → 停止彈跳
+  marker.element.addEventListener("mouseleave", () => {
+    marker.setAnimation(null);
     infoWindow.close();
   });
 
