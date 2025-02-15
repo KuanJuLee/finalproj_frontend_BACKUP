@@ -1,14 +1,13 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
-import axios from "axios";
+import axiosapi2 from "@/plugins/axios.js";
 
 const useUserStore = defineStore("user", () => {
     const token = ref("");
     const email = ref("");
     const role = ref("");
     const isTokenValid = ref(true); // 標記 token 是否有效
-    const baseUrl = import.meta.env.VITE_API_BASE_URL;
-     
+        
     // 設置 Email
     function setEmail(data) {
         email.value = data;
@@ -46,8 +45,8 @@ const useUserStore = defineStore("user", () => {
         }
 
         try {
-        const response = await axios.post(
-            `${baseUrl}/validateToken`,
+        const response = await axiosapi2.post(
+            `/validateToken`,
             {},
             {
             headers: {
