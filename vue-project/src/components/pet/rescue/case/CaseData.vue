@@ -61,8 +61,6 @@
 import { defineProps, ref, computed } from "vue";
 import followButton from "@/components/pet/rescue/follow/followButton.vue";
 
-console.log(caseData.casePictures?.[0].pictureUrl);
-
 //從RescueCase父組件傳遞的caseData
 defineProps({
   caseData: {

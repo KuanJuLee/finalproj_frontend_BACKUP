@@ -78,22 +78,6 @@ watch(
   { immediate: true }
 );
 
-// **監聽 `props.caseId`，當 `caseId` 更新時，重新檢查追蹤狀態**
-watch(
-  () => props.caseId,
-  async (newCaseId) => {
-    try {
-      if (newCaseId) {
-        console.log("監聽到 caseId 變更，執行 checkIfFollowing...");
-        await checkIfFollowing(); // ✅ 確保這是 `async`，並用 `await` 等待
-      }
-    } catch (error) {
-      console.error("監聽 caseId 變更時發生錯誤:", error);
-    }
-  },
-  { immediate: true }
-);
-
 // **初始化時檢查是否已追蹤**
 const checkIfFollowing = async () => {
   const token = getAuthToken();
@@ -119,6 +103,22 @@ const checkIfFollowing = async () => {
     console.error("檢查追蹤狀態失敗:", error);
   }
 };
+
+// **監聽 `props.caseId`，當 `caseId` 更新時，重新檢查追蹤狀態**
+watch(
+  () => props.caseId,
+  async (newCaseId) => {
+    try {
+      if (newCaseId) {
+        console.log("監聽到 caseId 變更，執行 checkIfFollowing...");
+        await checkIfFollowing(); // ✅ 確保這是 `async`，並用 `await` 等待
+      }
+    } catch (error) {
+      console.error("監聽 caseId 變更時發生錯誤:", error);
+    }
+  },
+  { immediate: true }
+);
 
 // 切換追蹤狀態
 const toggleFollow = async () => {
