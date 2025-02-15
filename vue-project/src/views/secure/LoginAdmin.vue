@@ -28,7 +28,7 @@
 
 <script setup>
 // import xxx from "@/plugins/axios.js";
-import { axiosapi2 } from "@/plugins/axios.js";
+import { axiosapi } from "@/plugins/axios.js";
 import Swal from "sweetalert2";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
@@ -55,10 +55,10 @@ async function login() {
     password: password.value,
   };
 
-  axiosapi2.defaults.headers.authorization = "";
+  axiosapi.defaults.headers.authorization = "";
 
   try {
-    const response = await axiosapi2.post("/secure/loginadmin", body);
+    const response = await axiosapi.post("/secure/loginadmin", body);
     console.log("response", response);
 
     if (response.data.success) {
@@ -70,8 +70,7 @@ async function login() {
         title: response.data.message,
         icon: "success",
       });
-      axiosapi2.defaults.headers.authorization =
-        "Bearer " + response.data.token;
+      axiosapi.defaults.headers.authorization = "Bearer " + response.data.token;
 
       router.push({ path: "/admin" });
     } else {

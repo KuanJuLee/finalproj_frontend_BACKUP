@@ -52,7 +52,7 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import useUserStore from "@/stores/user.js";
 import Swal from "sweetalert2";
-import { axiosapi2 } from "@/plugins/axios.js";
+import { axiosapi } from "@/plugins/axios.js";
 import { loadGoogleAuth } from "@/plugins/googleAuth.js";
 
 const username = ref("");
@@ -109,7 +109,7 @@ function googleLoginSuccess(response) {
   // 這是你的 API 請求，將 idToken 發送給後端進行認證
   console.log("發送 Google 登入請求...");
 
-  axiosapi2
+  axiosapi
     .post("/ajax/secure/google-login", { id_token: idToken })
     .then((response) => {
       console.log("後端回應:", response); // 確認後端回應
@@ -119,7 +119,7 @@ function googleLoginSuccess(response) {
         saveUserInfoToLocalStorage(response.data.user, response.data.token);
 
         // 設定 authorization header，這樣之後的所有請求會帶上 token
-        axiosapi2.defaults.headers.authorization = `Bearer ${response.data.token}`;
+        axiosapi.defaults.headers.authorization = `Bearer ${response.data.token}`;
 
         // 跳轉到會員中心
         router.push({ path: "/pages/MemberCenter" });
@@ -154,6 +154,7 @@ async function submitForm() {
   isLoggingIn.value = true; // 防止重複提交
   message.value = "";
 
+  console.log("要登入囉~");
   if (!username.value || !password.value) {
     message.value = "請填寫所有欄位";
     isLoggingIn.value = false;
@@ -179,7 +180,7 @@ async function submitForm() {
       userStore.setToken(response.data.token);
 
       // 設定 authorization header
-      axiosapi2.defaults.headers.authorization = `Bearer ${response.data.token}`;
+      axiosapi.defaults.headers.authorization = `Bearer ${response.data.token}`;
 
       // 跳轉到會員中心
       router.push({ path: "/pages/MemberCenter" });
