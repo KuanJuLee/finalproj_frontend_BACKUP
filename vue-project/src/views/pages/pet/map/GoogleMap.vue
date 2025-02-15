@@ -441,13 +441,13 @@ const addMarker = (
   const caseTypeStyle = (() => {
     switch (caseTypeZh) {
       case "救援案件":
-        return "background-color: #E16A54; color: white; border-radius: 10px; padding: 5px 10px; font-weight: bold;width: 75px; text-align: center;";
+        return "background-color: #E16A54; color: white; border-radius: 10px; padding: 5px 10px; font-weight: bold;width: 80px; text-align: center;";
       case "遺失案件":
-        return "background-color: #ffa726; color: white; border-radius: 10px; padding: 5px 10px; font-weight: bold;";
+        return "background-color: #ffa726; color: white; border-radius: 10px; padding: 5px 10px; font-weight: bold;width: 80px; text-align: center;";
       case "認養案件":
-        return "background-color: #42a5f5; color: white; border-radius: 10px; padding: 5px 10px; font-weight: bold;";
+        return "background-color: #42a5f5; color: white; border-radius: 10px; padding: 5px 10px; font-weight: bold;width: 80px; text-align: center;";
       default:
-        return "background-color: #9e9e9e; color: white; border-radius: 20px; padding: 5px 10px; font-weight: bold;";
+        return "background-color: #9e9e9e; color: white; border-radius: 20px; padding: 5px 10px; font-weight: bold;width: 80px; text-align: center;";
     }
   })();
 
@@ -525,7 +525,6 @@ const addMarker = (
     map,
     title: caseTitle, // 讓 Google Maps 內建 hover 顯示標題
     gmpClickable: true, //開啟滑鼠點擊屬性
-    animation: google.maps.Animation.DROP, // 掉落動畫
   });
   console.log("新marker的案件圖片", casePictures);
 
@@ -550,18 +549,6 @@ const addMarker = (
 
   // 監聽 `mouseleave` (滑鼠離開) 來關閉 `InfoWindow`
   marker.element.addEventListener("mouseleave", () => {
-    infoWindow.close();
-  });
-
-  // 監聽 `mouseenter` (滑鼠懸停) → 彈跳動畫
-  marker.element.addEventListener("mouseenter", () => {
-    marker.setAnimation(google.maps.Animation.BOUNCE);
-    infoWindow.open(map, marker);
-  });
-
-  // 監聽 `mouseleave` (滑鼠離開) → 停止彈跳
-  marker.element.addEventListener("mouseleave", () => {
-    marker.setAnimation(null);
     infoWindow.close();
   });
 
