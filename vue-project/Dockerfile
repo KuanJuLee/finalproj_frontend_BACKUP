@@ -15,8 +15,10 @@ CMD ["sh"]
 # 2. 使用 Nginx 作為前端伺服器
 FROM nginx:latest
 COPY --from=build /app/dist /usr/share/nginx/html    
+COPY nginx.conf /etc/nginx/nginx.conf  
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
 
+# COPY nginx.conf /etc/nginx/nginx.conf  設定 Nginx 配置檔
 # COPY --from=build /  build表第一建構階段產出，最終 /app/dist/ 會被複製到 Nginx 容器的 /usr/share/nginx/html
 # docker build 完成後，暫時性建構容器 自動銷毀，只有 leekuanju/frontend:latest 映像檔會被保存
