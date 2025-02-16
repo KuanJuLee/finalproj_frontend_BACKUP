@@ -6,22 +6,26 @@
         <SearchForm @search="handleSearch"></SearchForm>
         <div class="sort-buttons-container">
           <div class="sort-buttons">
-          <button
-          class="sort-button"
-          :class="{ active: sortOrder === 'desc' }"
-          @click="updateSortOrder('desc')"
-        >
-        <font-awesome-icon icon="fa-solid fa-arrow-down-short-wide" class="arrow-icon-wide"/>新到舊
-        </button>
-        <button
-          class="sort-button"
-          :class="{ active: sortOrder === 'asc' }"
-          @click="updateSortOrder('asc')"
-        ><font-awesome-icon icon="fa-solid fa-arrow-down-wide-short" />
-          舊到新
-        </button>
+            <button
+              class="sort-button"
+              :class="{ active: sortOrder === 'desc' }"
+              @click="updateSortOrder('desc')"
+            >
+              <font-awesome-icon
+                icon="fa-solid fa-arrow-down-short-wide"
+                class="arrow-icon-wide"
+              />新到舊
+            </button>
+            <button
+              class="sort-button"
+              :class="{ active: sortOrder === 'asc' }"
+              @click="updateSortOrder('asc')"
+            >
+              <font-awesome-icon icon="fa-solid fa-arrow-down-wide-short" />
+              舊到新
+            </button>
+          </div>
         </div>
-      </div>
         <CaseList :searchParams="searchParamsWithSort"> </CaseList>
       </div>
       <div class="sidebar">
@@ -40,17 +44,16 @@
 </template>
 
 <script setup>
-import { ref , computed} from "vue";
+import { ref, computed } from "vue";
 import SearchTitle from "@/components/pet/rescue/search/SearchTitle.vue";
 import SearchForm from "@/components/pet/rescue/search/SearchForm.vue";
 import CaseList from "@/components/pet/rescue/search/CaseList.vue";
 
 // 搜尋參數
-const searchParams = ref({}); 
+const searchParams = ref({});
 
 // 排序默認為新到舊
-const sortOrder = ref("desc"); 
-
+const sortOrder = ref("desc");
 
 // 接收搜尋條件
 const handleSearch = (params) => {
@@ -68,7 +71,6 @@ const searchParamsWithSort = computed(() => ({
   searchParams: searchParams.value,
   sortOrder: sortOrder.value,
 }));
-
 </script>
 
 <style>
@@ -150,7 +152,6 @@ const searchParamsWithSort = computed(() => ({
   border-bottom: #6a6b6b 2px solid;
 }
 
-
 .sort-buttons {
   display: flex;
   gap: 5px; /* 按鈕間距 */
@@ -177,8 +178,7 @@ const searchParamsWithSort = computed(() => ({
   background-color: #ffd66f;
 }
 
-.arrow-icon-wide{
+.arrow-icon-wide {
   margin-right: 10px;
 }
-
 </style>

@@ -1,4 +1,4 @@
-<template lang="">
+<template>
   <!-- 沒註冊過也沒有用line登入的，根本看不到此畫面，因為此畫面只在會員中心中，表示一定有memberid -->
   <!-- 目前已限制必須是有LINEID的用戶才能使用message api通知功能，因此只有網站註冊的要先進行line綁定，而沒註冊但使用Line登入的可直接追蹤商家 -->
   <div class="line-container">
@@ -8,7 +8,7 @@
       <LineLogin @bindingSuccess="handleBindingSuccess"></LineLogin>
     </div>
     <div v-else>
-      <p>您的 LINE 帳戶已綁定，請點擊下方按鈕追蹤商家：</p>
+      <p>您的 LINE 帳戶已綁定，點擊下方按鈕追蹤商家：</p>
       <a href="https://line.me/R/ti/p/@310pndih" target="_blank">
         <img
           height="55"
@@ -17,8 +17,8 @@
         />
       </a>
       <!-- 是否已追蹤商家提示文字 -->
-      <p v-if="followStatus">✅ 連動成功</p>
-      <p v-else>❌ 尚未連動成功</p>
+      <p v-if="followStatus" class="follow-status">✅ 連動成功</p>
+      <p v-else class="follow-status">❌ 尚未連動成功</p>
     </div>
   </div>
 </template>
@@ -27,7 +27,7 @@
 import { axiosapi2 } from "@/plugins/axios.js";
 import Swal from "sweetalert2";
 import LineLogin from "@/components/member/login/LineLogin.vue";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 
 // 狀態
@@ -35,10 +35,6 @@ const isBound = ref(false); // 控制顯示line登入或line加好友
 const followStatus = ref(null); // 追蹤狀態，null 表示尚未檢查
 const userToken = ref(""); // 用戶的 Token
 const memberId = ref("");
-
-const baseUrl = import.meta.env.VITE_API_BASE_URL;
-
-// 初始化
 const router = useRouter();
 
 onMounted(async () => {
@@ -103,10 +99,33 @@ async function checkFollowStatus() {
   }
 }
 
+// 監聽 followStatus，當變更時輸出 log 或進行其他操作
+watch(followStatus, (newVal) => {
+  console.log("追蹤狀態已更新:", newVal);
+});
+
 // 綁定成功處理
 function handleBindingSuccess() {
   checkBindingStatus();
   checkFollowStatus();
 }
 </script>
-<style scoped></style>
+<style scoped>
+.line-container {
+  display: flex;
+  flex-direction: column; /* 讓內容垂直排列 */
+  justify-content: center; /* 垂直置中 */
+  align-items: center; /* 水平置中 */
+}
+
+.line-container div {
+  display: flex;
+  flex-direction: column; /* 讓內容垂直排列 */
+  justify-content: center;
+  align-items: center;
+}
+
+.follow-status {
+  margin-top: 10px;
+}
+</style>

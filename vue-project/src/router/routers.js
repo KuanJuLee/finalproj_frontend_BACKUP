@@ -2,18 +2,16 @@ import { createRouter, createWebHistory } from 'vue-router';
 import useUserStore from "@/stores/user";
 import Swal from "sweetalert2";
 
-//前台頁面
+//前台、全局相關頁面
 import Home from "@/views/Home.vue";
 import NotFound from '@/views/NotFound.vue';
 import Forbidden from '@/views/Forbidden.vue';
-import Login from '@/views/secure/Login.vue';   //舊的，先不用了
-import RescueCase from '@/views/pages/pet/rescue/RescueCase.vue';
-import EditRescueCase from '../views/pages/pet/rescue/EditRescueCase.vue';
-import NewRescueProgress from '../views/pages/pet/rescue/NewRescueProgress.vue';
-import RescueSearch from '@/views/pages/pet/rescue/RescueSearch.vue';
-
  
 //冠儒相關功能
+import RescueSearch from '@/views/pages/pet/rescue/RescueSearch.vue';
+import NewRescueProgress from '../views/pages/pet/rescue/NewRescueProgress.vue';
+import EditRescueCase from '../views/pages/pet/rescue/EditRescueCase.vue';
+import RescueCase from '@/views/pages/pet/rescue/RescueCase.vue';
 import NewRescueCase from '../views/pages/pet/rescue/NewRescueCase.vue';
 import GoogleMap from '@/views/pages/pet/map/GoogleMap.vue';
 
@@ -26,6 +24,7 @@ import LoginAdmin from '@/views/secure/LoginAdmin.vue';
 import MemberCenter from '@/views/pages/MemberCenter.vue';
 import Register from '@/views/pages/Register.vue';
 import MemberCard from '@/views/pages/MemberCard.vue';
+//冠
 import LineMessage from '@/views/secure/LineMessage.vue'; 
 import FollowCase from '@/views/secure/FollowCase.vue';
 import MemberRescueCase from '../views/secure/MemberRescueCase.vue';
@@ -44,6 +43,8 @@ const routes = [
   { path: "/403", component: Forbidden, name: "forbidden-link" },
   { path: '/secure/login', component: LoginMember, name: 'login-link' },
   { path: '/secure/loginadmin', component: LoginAdmin, name: 'login-admin-link' },
+  
+  //冠頁面
   { path: "/pet/rescue/search", component: RescueSearch, name: "pet-rescueSearch-link"}, 
   { path: "/pet/rescueCase/:id", component: RescueCase, name: "pet-rescueCase-link",  props: true},  // 使用 props 傳遞參數產生動態路由(新增案件)
   { path: "/pet/rescueCase/edit/:id", component: EditRescueCase, name: "pet-rescueCase-edit-link",  props: true},  // 使用 props 傳遞參數產生動態路由(編輯案件)

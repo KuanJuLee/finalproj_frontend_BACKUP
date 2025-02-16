@@ -14,8 +14,6 @@ import { useRoute, useRouter } from "vue-router";
 import { axiosapi2 } from "@/plugins/axios";
 import useUserStore from "@/stores/user";
 
-const baseUrl = import.meta.env.VITE_API_BASE_URL;
-
 const route = useRoute();
 const router = useRouter();
 const userStore = useUserStore();

@@ -16,7 +16,7 @@
     letter-spacing: 1px;
 }
 
-body {
+/* body {
     font-family: var(--font-stack);
     background-image: url('@/assets/背景圖2.png');
     background-size: auto;
@@ -25,7 +25,7 @@ body {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-}
+} */
 
 /* 單獨設置管理員後台的頁面 */
 body.admin-page {
